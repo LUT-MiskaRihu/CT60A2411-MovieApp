@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="false"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/spnTheaters"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:hint="elokuvan nimi"
+                android:inputType="text" />
+
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnClearTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Tyhjennä"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etDate"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:clickable="false"
+                android:duplicateParentState="false"
+                android:editable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:hint="päivämäärä"
+                android:inputType="date"
+                android:onClick="pickDate" />
+
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnClearDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Tyhjennä"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etTimeMin"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:editable="false"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:hint="alkaa aikaisintaan"
+                android:inputType="time" />
+
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnClearTimeMin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Tyhjennä"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/etTimeMax"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:hint="alkaa viimeistään"
+                android:inputType="time" />
+
+            <Space
+                android:layout_width="5dp"
+                android:layout_height="wrap_content" />
+
+            <Button
+                android:id="@+id/btnClearTimeMax"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="Tyhjennä"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSearch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:onClick="search"
+                android:text="Tee haku"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/debugButton"
+                    style="@android:style/Widget.Holo.Light.Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:onClick="showFilter"
+                    android:text="debug"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+                <EditText
+                    android:id="@+id/debugText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:ems="10"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:gravity="start|top"
+                    android:inputType="textMultiLine"
+                    android:scrollbars="horizontal|vertical" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
