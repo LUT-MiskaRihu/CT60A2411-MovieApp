@@ -1,10 +1,12 @@
 package com.example.test;
 
 import android.annotation.SuppressLint;
+import android.provider.ContactsContract;
 
 import androidx.annotation.Discouraged;
 import androidx.annotation.NonNull;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Filter {
@@ -40,7 +42,7 @@ public class Filter {
 
     private static Filter instance = null;
 
-    public Filter() { }
+    private Filter() { }
 
     /**
      * Gets the instance of the Filter class.
@@ -366,6 +368,18 @@ public class Filter {
         );
 
         return s;
+    }
+
+    public ArrayList<Show> getShows() {
+        ArrayList<Show> filtered = null;
+        for (Show s : Database.getInstance().getShows()) {
+            if (title != null) {
+                if (s.getTitle().equals(title)) {
+                    filtered.add(s);
+                }
+            }
+        }
+        return filtered;
     }
 }
 
