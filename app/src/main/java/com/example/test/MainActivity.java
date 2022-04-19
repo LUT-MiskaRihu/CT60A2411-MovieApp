@@ -5,13 +5,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -21,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
+    private Spinner spnTheatres;
     private EditText etTitle;
     private EditText etDate;
     private EditText etTimeMin;
@@ -31,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private Button btnClearTimeMax;
     private Button btnSearch;
     private TextWatcher textWatcher;
+
     private Filter filter;
 
     private TextView debugText;
@@ -40,16 +46,15 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
-        /**
-         * DEBUG ELEMENTS, REMOVE OR DISABLE FROM THE FINAL RELEASE
-         */
+        // DEBUG ELEMENTS, REMOVE OR DISABLE FROM THE FINAL RELEASE
         debugButton = findViewById(R.id.debugButton);
         debugText = findViewById(R.id.debugText);
 
-        /**
-         * Assign variables to UI elements
-         */
+        // Assign variables to UI elements
+        spnTheatres = findViewById(R.id.spnTheaters);
         etTitle = findViewById(R.id.etTitle);
         etDate = findViewById(R.id.etDate);
         etTimeMin = findViewById(R.id.etTimeMin);
@@ -60,9 +65,7 @@ public class MainActivity extends AppCompatActivity {
         btnClearTimeMax = findViewById(R.id.btnClearTimeMax);
         filter = Filter.getInstance();
 
-        /**
-         * Set onClickListeners (aka button click actions) for buttons
-         */
+        // Set onClickListeners (aka button click actions) for buttons
         etTimeMin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,8 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 etTimeMax.setText(null);
             }
         });
-
-
         etTitle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -121,6 +122,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // Initiate spinner
+        ArrayAdapter<Theatre> theatreAdapter = new ArrayAdapter<Theatre>(this, android.R.layout.simple_spinner_dropdown_item, Database.getInstance().getTheatres());
+        spnTheatres.setAdapter(theatreAdapter);
+
+        // Functionality
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
         try {
             Calendar calendar = Calendar.getInstance();
@@ -148,12 +154,12 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("DefaultLocale")
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                filter.setDateFor(Filter1.CALENDAR_START_BOTH, year, month, day);
+                filter.setDateFor( Filter.CALENDAR_START_BOTH, year, month, day);
                 etDate.setText(String.format(
                         "%02d.%02d.%04d",
-                        filter.getDayFrom(Filter1.CALENDAR_START_MIN),
-                        filter.getMonthFrom(Filter1.CALENDAR_START_MIN),
-                        filter.getYearFrom(Filter1.CALENDAR_START_MIN)
+                        filter.getDayFrom( Filter.CALENDAR_START_MIN),
+                        filter.getMonthFrom( Filter.CALENDAR_START_MIN),
+                        filter.getYearFrom( Filter.CALENDAR_START_MIN)
                 ));
             }
         };
@@ -185,9 +191,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
                 if (et.equals(etTimeMin)) {
-                    filter.setTimeFor(Filter1.CALENDAR_START_MIN, hour, minute);
+                    filter.setTimeFor( Filter.CALENDAR_START_MIN, hour, minute);
                 } else if (et.equals(etTimeMax)) {
-                    filter.setTimeFor(Filter1.CALENDAR_START_MAX, hour, minute);
+                    filter.setTimeFor( Filter.CALENDAR_START_MAX, hour, minute);
                 }
                 et.setText(String.format("%2d:%02d", hour, minute));
             }
@@ -204,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void search(View view) {
-        if (filter.getHourFrom(Filter1.CALENDAR_START_MIN) >= filter.getHourFrom(Filter1.CALENDAR_START_MAX)) {
+        if (filter.getHourFrom( Filter.CALENDAR_START_MIN) >= filter.getHourFrom( Filter.CALENDAR_START_MAX)) {
             Toast.makeText(this, "Myöhemmän ajan on oltava myöhemmin kuin aikaisemman ajan!", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Haetaan leffoja :)", Toast.LENGTH_SHORT).show();
@@ -213,5 +219,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void showFilter(View view) {
         debugText.setText(filter.toString());
+    }
+
+    public void loadDebugActivity(View view) {
+        Intent intent = new Intent(MainActivity.this, DebugActivity.class);
+        startActivity(intent);
     }
 }
