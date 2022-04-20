@@ -50,6 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:hapticFeedbackEnabled="true"
                 android:text="Tyhjennä"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
         </LinearLayout>
@@ -70,8 +71,7 @@
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:hint="päivämäärä"
-                android:inputType="date"
-                android:onClick="pickDate" />
+                android:inputType="date"/>
 
             <Space
                 android:layout_width="5dp"
@@ -82,8 +82,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:hapticFeedbackEnabled="true"
                 android:text="Tyhjennä"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -111,6 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:hapticFeedbackEnabled="true"
                 android:text="Tyhjennä"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
         </LinearLayout>
@@ -139,6 +142,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:hapticFeedbackEnabled="true"
                 android:text="Tyhjennä"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
         </LinearLayout>
@@ -153,6 +157,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:hapticFeedbackEnabled="false"
                 android:onClick="search"
                 android:text="Tee haku"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
@@ -169,32 +174,23 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/debugButton"
-                    style="@android:style/Widget.Holo.Light.Button"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:onClick="loadDebugActivity"
-                    android:text="debug"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-
-                <EditText
-                    android:id="@+id/debugText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:editable="false"
-                    android:ems="10"
-                    android:focusable="false"
-                    android:focusableInTouchMode="false"
-                    android:gravity="start|top"
-                    android:inputType="textMultiLine"
-                    android:scrollbars="horizontal|vertical" />
-
             </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
+
+    <Button
+        android:id="@+id/debugButton"
+        style="@android:style/Widget.Holo.Light.Button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:onClick="loadDebugActivity"
+        android:text="debug"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
