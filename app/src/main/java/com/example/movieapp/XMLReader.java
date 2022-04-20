@@ -1,5 +1,7 @@
 package com.example.movieapp;
 
+import android.provider.ContactsContract;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -86,17 +88,8 @@ public class XMLReader {
         return theatres;
     }
 
-    /**
-     * Reads show information from online XML data,
-     * and converts the elements to Show objects.
-     * @return ArrayList of found shows (objects)
-     */
-    public ArrayList<Show> getShows() {
-        String scheduleURL = "https://www.finnkino.fi/xml/Schedule";
-        String showTag = "Show";
+    private ArrayList<Show> parseShows(NodeList showNodes) {
         ArrayList<Show> shows = new ArrayList<Show>();
-        NodeList showNodes = getNodesByTagName(scheduleURL, showTag);
-
         for (int i=0; i<showNodes.getLength(); i++) {
             Node showNode = showNodes.item(i);
             if (showNode.getNodeType() == Element.ELEMENT_NODE) {
@@ -120,6 +113,30 @@ public class XMLReader {
                 shows.add(show);
             }
         }
+        return shows;
+    }
+
+    /**
+     * Reads show information from online XML data,
+     * and converts the elements to Show objects.
+     * @return ArrayList of found shows (objects)
+     */
+    public ArrayList<Show> getShows() {
+        String scheduleURL = "https://www.finnkino.fi/xml/Schedule/";
+        String showTag = "Show";
+        NodeList showNodes = getNodesByTagName(scheduleURL, showTag);
+        ArrayList<Show> shows = parseShows(showNodes);
+        return shows;
+    }
+
+    public ArrayList<Show> getShows(String[] args) {
+        StringBuilder scheduleURL = new StringBuilder("https://www.finnkino.fi/xml/Schedule/?");
+        for (String arg : args) {
+            scheduleURL.append("&").append(arg);
+        }
+        String showTag = "Show";
+        NodeList showNodes = getNodesByTagName(scheduleURL.toString(), showTag);
+        ArrayList<Show> shows = parseShows(showNodes);
         return shows;
     }
 }
