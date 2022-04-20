@@ -1,11 +1,9 @@
-package com.example.test;
+package com.example.movieapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 public class DebugFilterActivity extends AppCompatActivity {
     @Override

@@ -1,4 +1,4 @@
-package com.example.test;
+package com.example.movieapp;
 
 import static java.lang.System.exit;
 import android.annotation.SuppressLint;

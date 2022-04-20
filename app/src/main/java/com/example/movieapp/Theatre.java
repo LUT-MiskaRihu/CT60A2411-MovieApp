@@ -1,4 +1,4 @@
-package com.example.test;
+package com.example.movieapp;
 
 public class Theatre {
     private int id;

@@ -1,4 +1,4 @@
-package com.example.test;
+package com.example.movieapp;
 
 import android.content.Context;
 

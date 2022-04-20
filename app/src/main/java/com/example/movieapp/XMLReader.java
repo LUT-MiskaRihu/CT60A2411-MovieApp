@@ -1,4 +1,4 @@
-package com.example.test;
+package com.example.movieapp;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
