@@ -33,6 +33,7 @@ public class Show {
     private String eventType;
     private String genres;
     private int locationID;
+    private String locationName;
     private String PresentationMethodAndLanguage;
 
     @SuppressLint("SimpleDateFormat")
@@ -52,6 +53,7 @@ public class Show {
         this.eventType = null;
         this.genres = null;
         this.locationID = 0;
+        this.locationName = null;
         this.PresentationMethodAndLanguage = null;
     }
 
@@ -109,6 +111,15 @@ public class Show {
             e.printStackTrace();
         }
     }
+
+    public long getStartTime() {
+        return startDateTime.getTime().getTime();
+    }
+
+    public long getEndTime() {
+        return endDateTime.getTime().getTime();
+    }
+
 
     @SuppressLint("DefaultLocale")
     public String getDateString(int calendar) {
@@ -262,6 +273,14 @@ public class Show {
         this.locationID = Integer.parseInt(locationID);
     }
 
+    public String getLocationName() {
+        return locationName;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
     public String getPresentationMethodAndLanguage() {
         return PresentationMethodAndLanguage;
     }
@@ -274,12 +293,11 @@ public class Show {
     @Override
     public String toString() {
         String movie;
-        movie = getTitle() + '\n'
-                + "Teatteri: " + getLocationID() + '\n'
-                + "Päivämäärä: " + getDateString(START_DATE_TIME) + '\n'
-                + "Alkaa: " + getTimeString(START_DATE_TIME) + '\n'
-                + "Loppuu: " + getTimeString(END_DATE_TIME) + '\n'
-                + "Kesto: " + getLength() + " minuuttia";
+
+        movie = getTitle() + " (K-" + getRating() + ")" + "\n\n" +
+                "Esitysaika: " + getDateString(START_DATE_TIME) + " klo " + getTimeString(START_DATE_TIME) + " - " + getTimeString(END_DATE_TIME) + "\n" +
+                "Esityspaikka: " + getLocationName() + "\n\n" +
+                getGenres();
         return movie;
     }
 }
