@@ -45,4 +45,30 @@ public class Database {
         System.out.println("#############################################################");
         return shows;
     }
+
+    public String getTheatreByID(int id) {
+        //System.out.println("#### Database.getTheatreByID() ##############################");
+        String name = null;
+        for (Theatre t : theatres) {
+            if (t.getID() == id) {
+                name = t.getName();
+        //        System.out.println("\t\t" + t.getID() + ", " + t.getName());
+            }
+        }
+        //System.out.println("#############################################################");
+        return name;
+    }
+
+    public int getTheatreByName(String name) {
+        //System.out.println("#### Database.getTheatreByName ##############################");
+        int id = 0;
+        for (Theatre t : theatres) {
+            if (t.getName().equals(name)) {
+                id = t.getID();
+        //        System.out.println("\t\t" + t.getID() + ", " + t.getName());
+            }
+        }
+        //System.out.println("#############################################################");
+        return id;
+    }
 }
