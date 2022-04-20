@@ -294,10 +294,10 @@ public class Show {
     public String toString() {
         String movie;
 
-        movie = getTitle() + " (K-" + getRating() + ")" + "\n\n" +
+        movie = "\n" + getTitle().toUpperCase() + " (K-" + getRating() + ")" + "\n\n\n" +
                 "Esitysaika: " + getDateString(START_DATE_TIME) + " klo " + getTimeString(START_DATE_TIME) + " - " + getTimeString(END_DATE_TIME) + "\n" +
                 "Esityspaikka: " + getLocationName() + "\n\n" +
-                getGenres();
+                getGenres() + "\n";
         return movie;
     }
 }
