@@ -14,13 +14,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class XMLReader {
-    private final String theatresURL = "https://www.finnkino.fi/xml/TheatreAreas";
-    private final String scheduleURL = "https://www.finnkino.fi/xml/Schedule";
-    private final String theatreTag = "TheatreArea";
-    private final String showTag = "Show";
     private static XMLReader instance = null;
 
-    public XMLReader() {    }
+    public XMLReader() { }
 
     public static XMLReader getInstance() {
         if (instance == null) {
@@ -56,17 +52,27 @@ public class XMLReader {
         return nodes;
     }
 
+    /**
+     * Gets the text content of a specified XML Element
+     * @param e element
+     * @param tagName tag whose content we want to get
+     * @return text content by tag name of the specified element
+     */
     private String getTextContent(Element e, String tagName) {
         return e.getElementsByTagName(tagName).item(0).getTextContent().toString();
     }
 
     /**
-     *
-     * @return
+     * Reads theatre information from online XML data,
+     * and converts the elements to Theatre objects.
+     * @return ArrayList of found theatres (objects)
      */
     public ArrayList<Theatre> getTheatres() {
+        String theatresURL = "https://www.finnkino.fi/xml/TheatreAreas";
+        String theatreTag = "TheatreArea";
         ArrayList<Theatre> theatres = new ArrayList<Theatre>();
         NodeList theatreNodes = getNodesByTagName(theatresURL, theatreTag);
+
         for (int i=0; i<theatreNodes.getLength(); i++) {
             Node theatreNode = theatreNodes.item(i);
             if (theatreNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -80,9 +86,17 @@ public class XMLReader {
         return theatres;
     }
 
+    /**
+     * Reads show information from online XML data,
+     * and converts the elements to Show objects.
+     * @return ArrayList of found shows (objects)
+     */
     public ArrayList<Show> getShows() {
+        String scheduleURL = "https://www.finnkino.fi/xml/Schedule";
+        String showTag = "Show";
         ArrayList<Show> shows = new ArrayList<Show>();
         NodeList showNodes = getNodesByTagName(scheduleURL, showTag);
+
         for (int i=0; i<showNodes.getLength(); i++) {
             Node showNode = showNodes.item(i);
             if (showNode.getNodeType() == Element.ELEMENT_NODE) {
@@ -101,6 +115,7 @@ public class XMLReader {
                 show.setEventType(getTextContent(showElement, "EventType"));
                 show.setGenres(getTextContent(showElement, "Genres"));
                 show.setLocationID(getTextContent(showElement, "TheatreID"));
+                show.setLocationName(getTextContent(showElement, "TheatreAndAuditorium"));
                 show.setPresentationMethodAndLanguage(getTextContent(showElement, "PresentationMethodAndLanguage"));
                 shows.add(show);
             }
