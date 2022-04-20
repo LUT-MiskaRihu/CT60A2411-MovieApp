@@ -16,12 +16,9 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,19 +36,12 @@ public class MainActivity extends AppCompatActivity {
 
     private Filter filter;
 
-    private TextView debugText;
-    private Button debugButton;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
-
-        // DEBUG ELEMENTS, REMOVE OR DISABLE FROM THE FINAL RELEASE
-        debugButton = findViewById(R.id.debugButton);
-        debugText = findViewById(R.id.debugText);
 
         // Assign variables to UI elements
         spnTheatres = findViewById(R.id.spnTheaters);
@@ -63,48 +53,66 @@ public class MainActivity extends AppCompatActivity {
         btnClearDate = findViewById(R.id.btnClearDate);
         btnClearTimeMin = findViewById(R.id.btnClearTimeMin);
         btnClearTimeMax = findViewById(R.id.btnClearTimeMax);
+
+        // Initiate spinner
+        ArrayAdapter<Theatre> theatreAdapter = new ArrayAdapter<Theatre>(this, android.R.layout.simple_spinner_dropdown_item, Database.getInstance().getTheatres());
+        spnTheatres.setAdapter(theatreAdapter);
+
         filter = Filter.getInstance();
 
-        // Set onClickListeners (aka button click actions) for buttons
-        etTimeMin.setOnClickListener(new View.OnClickListener() {
+        // Set onClick actions
+        View.OnClickListener onClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                pickTime(etTimeMin);
+                // Pick time min
+                if (view == etTimeMin) {
+                    pickTime(etTimeMin);
+                }
+
+                // Pick time max
+                else if (view == etTimeMax) {
+                    pickTime(etTimeMax);
+                }
+
+                // Pick date
+                else if (view == etDate) {
+                    pickDate();
+                }
+
+                // Clear title
+                else if (view == btnClearTitle) {
+                    filter.clearField(Filter.FIELD_TITLE);
+                    etTitle.setText(null);
+                }
+
+                // Clear date
+                else if (view == btnClearDate) {
+                    filter.clearField(Filter.FIELD_DATE);
+                    etDate.setText(null);
+                }
+
+                // Clear time min
+                else if (view == btnClearTimeMin) {
+                    filter.clearField(Filter.FIELD_TIME_MIN);
+                    etTimeMin.setText(null);
+                }
+
+                // Clear time max
+                else if (view == btnClearTimeMax) {
+                    filter.clearField(Filter.FIELD_TIME_MAX);
+                    etTimeMax.setText(null);
+                }
             }
-        });
-        etTimeMax.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                pickTime(etTimeMax);
-            }
-        });
-        btnClearTitle.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                etTitle.setText(null);
-            }
-        });
-        btnClearDate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                filter.clearField(Filter.FIELD_DATE);
-                etDate.setText(null);
-            }
-        });
-        btnClearTimeMin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                filter.clearField(Filter.FIELD_TIME_MIN);
-                etTimeMin.setText(null);
-            }
-        });
-        btnClearTimeMax.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                filter.clearField(Filter.FIELD_TIME_MAX);
-                etTimeMax.setText(null);
-            }
-        });
+        };
+
+        etDate.setOnClickListener(onClickListener);
+        etTimeMin.setOnClickListener(onClickListener);
+        etTimeMax.setOnClickListener(onClickListener);
+        btnClearTitle.setOnClickListener(onClickListener);
+        btnClearDate.setOnClickListener(onClickListener);
+        btnClearTimeMin.setOnClickListener(onClickListener);
+        btnClearTimeMax.setOnClickListener(onClickListener);
+
         etTitle.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -122,27 +130,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Initiate spinner
-        ArrayAdapter<Theatre> theatreAdapter = new ArrayAdapter<Theatre>(this, android.R.layout.simple_spinner_dropdown_item, Database.getInstance().getTheatres());
-        spnTheatres.setAdapter(theatreAdapter);
-
-        // Functionality
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-        try {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(simpleDateFormat.parse("2022-04-01T22:12"));
-            System.out.println(calendar);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
      * This function shows the DatePickerDialog when the user clicks on the date field,
      * and sets the date params in filter object (year, month, and day of month)
-     * @param view
      */
-    public void pickDate(View view) {
+    public void pickDate() {
         Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
         int month = calendar.get(Calendar.MONTH);
@@ -154,12 +148,12 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("DefaultLocale")
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                filter.setDateFor( Filter.CALENDAR_START_BOTH, year, month, day);
+                filter.setDateFor(Filter.START_TIME_BOTH, year, month, day);
                 etDate.setText(String.format(
                         "%02d.%02d.%04d",
-                        filter.getDayFrom( Filter.CALENDAR_START_MIN),
-                        filter.getMonthFrom( Filter.CALENDAR_START_MIN),
-                        filter.getYearFrom( Filter.CALENDAR_START_MIN)
+                        filter.getDayFrom(Filter.START_TIME_MIN),
+                        filter.getMonthFrom(Filter.START_TIME_MIN),
+                        filter.getYearFrom(Filter.START_TIME_MIN)
                 ));
             }
         };
@@ -178,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
     /**
      * This function shows TimePickerDialog when the user clicks on either the minimum or maximum
      * time fields, and sets the filters attributes accordingly.
-     * @param et
+     * @param et text field to edit
      */
     public void pickTime(EditText et) {
         Calendar calendar = Calendar.getInstance();
@@ -191,9 +185,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
                 if (et.equals(etTimeMin)) {
-                    filter.setTimeFor( Filter.CALENDAR_START_MIN, hour, minute);
+                    filter.setTimeFor(Filter.START_TIME_MIN, hour, minute);
                 } else if (et.equals(etTimeMax)) {
-                    filter.setTimeFor( Filter.CALENDAR_START_MAX, hour, minute);
+                    filter.setTimeFor(Filter.START_TIME_MAX, hour, minute);
                 }
                 et.setText(String.format("%2d:%02d", hour, minute));
             }
@@ -202,23 +196,37 @@ public class MainActivity extends AppCompatActivity {
         TimePickerDialog timePickerDialog = new TimePickerDialog(
                 MainActivity.this,
                 onTimeSetListener,
-                hour,
-                minute,
+                12,
+                0,
                 true
         );
         timePickerDialog.show();
     }
 
+    /**
+     *
+     */
+    public void pickTheatre() {
+        filter.setLocationID(spnTheatres.getSelectedItem().toString());
+    }
+
+    /**
+     *
+     * @param view
+     */
     public void search(View view) {
-        if (filter.getHourFrom( Filter.CALENDAR_START_MIN) >= filter.getHourFrom( Filter.CALENDAR_START_MAX)) {
-            Toast.makeText(this, "Myöhemmän ajan on oltava myöhemmin kuin aikaisemman ajan!", Toast.LENGTH_SHORT).show();
+        pickTheatre();
+        if (filter.getHourFrom(Filter.START_TIME_MIN) >= filter.getHourFrom(Filter.START_TIME_MAX)) {
+            Toast.makeText(this, "Alkamisajan minimi ei voi olla suurempi kuin sen maksini!", Toast.LENGTH_LONG).show();
         } else {
-            Toast.makeText(this, "Haetaan leffoja :)", Toast.LENGTH_SHORT).show();
+            loadDebugActivity(view);
         }
     }
 
-    public void showFilter(View view) {
-        debugText.setText(filter.toString());
+    public void showFilter() {
+        System.out.println("#### MainActivity.showFilter() ##############################");
+        System.out.println(filter.toString());
+        System.out.println("#############################################################");
     }
 
     public void loadDebugActivity(View view) {
