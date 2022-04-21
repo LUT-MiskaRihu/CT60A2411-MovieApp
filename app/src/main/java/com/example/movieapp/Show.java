@@ -3,15 +3,16 @@ package com.example.movieapp;
 import static java.lang.System.exit;
 import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
-import java.text.ParseException;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class Show {
     // Calendar codes
     public static final int START_DATE_TIME = 0;
     public static final int END_DATE_TIME = 1;
-    public static final int LOCAL_RELEASE = 2;
+    public static final int LOCAL_RELEASE_DATE_TIME = 2;
 
     // Exit codes
     public static final int EXIT_INVALID_CALENDAR_CODE = 1;
@@ -35,6 +36,7 @@ public class Show {
     private int locationID;
     private String locationName;
     private String PresentationMethodAndLanguage;
+    private CalendarConverter calendarConverter = CalendarConverter.getInstance();
 
     @SuppressLint("SimpleDateFormat")
     private final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -57,20 +59,68 @@ public class Show {
         this.PresentationMethodAndLanguage = null;
     }
 
+    // ID
     public int getID() {
         return id;
     }
-
     public void setID(int id) {
         this.id = id;
     }
-
     public void setID(String id) {
         this.id = Integer.parseInt(id);
     }
 
+    public void setStartDateTime(Date date) {
+        startDateTime.setTime(date);
+    }
+
+    public void setEndDateTime(Date date) {
+        endDateTime.setTime(date);
+    }
+
+    public void setLocalReleaseDateTime(Date date) {
+        localReleaseDateTime.setTime(date);
+    }
+
+    public Calendar getStartDateTime() {
+        return startDateTime;
+    }
+
+    public Calendar getEndDateTime() {
+        return endDateTime;
+    }
+
+    public Calendar getLocalReleaseDateTime() {
+        return localReleaseDateTime;
+    }
+
+    public Calendar getDate() {
+        return startDateTime;
+    }
+
+    public void setDateTime(int calendar, Date date) {
+        Calendar dateTime = Calendar.getInstance();
+        dateTime.setTime(date);
+        switch (calendar) {
+            case(START_DATE_TIME):
+                startDateTime = dateTime;
+                break;
+            case(END_DATE_TIME):
+                endDateTime = dateTime;
+                break;
+            case(LOCAL_RELEASE_DATE_TIME):
+                localReleaseDateTime = dateTime;
+                break;
+            default:
+                System.err.println(ERR_INVALID_CALENDAR_CODE);
+                exit(EXIT_INVALID_CALENDAR_CODE);
+                break;
+        }
+    }
+
+    @Deprecated
     public Calendar getDateTime(int calendar) {
-        Calendar dateTime = null;
+        Calendar dateTime;
         switch (calendar) {
             case(START_DATE_TIME):
                 dateTime = startDateTime;
@@ -78,48 +128,17 @@ public class Show {
             case(END_DATE_TIME):
                 dateTime = endDateTime;
                 break;
-            case(LOCAL_RELEASE):
+            case(LOCAL_RELEASE_DATE_TIME):
                 dateTime = localReleaseDateTime;
                 break;
             default:
+                dateTime = null;
                 System.err.println(ERR_INVALID_CALENDAR_CODE);
                 exit(EXIT_INVALID_CALENDAR_CODE);
                 break;
         }
         return dateTime;
     }
-
-    public void setDateTime(int calendar, String dateTimeString) {
-        Calendar dateTime = null;
-        try {
-            switch (calendar) {
-                case(START_DATE_TIME):
-                    startDateTime.setTime(dateTimeFormatter.parse(dateTimeString));
-                    break;
-                case(END_DATE_TIME):
-                    endDateTime.setTime(dateTimeFormatter.parse(dateTimeString));
-                    break;
-                case(LOCAL_RELEASE):
-                    localReleaseDateTime.setTime(dateTimeFormatter.parse(dateTimeString));
-                    break;
-                default:
-                    System.err.println(ERR_INVALID_CALENDAR_CODE);
-                    exit(EXIT_INVALID_CALENDAR_CODE);
-                    break;
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public long getStartTime() {
-        return startDateTime.getTime().getTime();
-    }
-
-    public long getEndTime() {
-        return endDateTime.getTime().getTime();
-    }
-
 
     @SuppressLint("DefaultLocale")
     public String getDateString(int calendar) {
@@ -139,7 +158,7 @@ public class Show {
                     month = endDateTime.get(Calendar.MONTH) + 1;
                     year = endDateTime.get(Calendar.YEAR);
                     break;
-                case(LOCAL_RELEASE):
+                case(LOCAL_RELEASE_DATE_TIME):
                     day = localReleaseDateTime.get(Calendar.DAY_OF_MONTH);
                     month = localReleaseDateTime.get(Calendar.MONTH) + 1;
                     year = localReleaseDateTime.get(Calendar.YEAR);
@@ -170,7 +189,7 @@ public class Show {
                     hour = endDateTime.get(Calendar.HOUR_OF_DAY);
                     minute = endDateTime.get(Calendar.MINUTE) + 1;
                     break;
-                case(LOCAL_RELEASE):
+                case(LOCAL_RELEASE_DATE_TIME):
                     hour = localReleaseDateTime.get(Calendar.HOUR_OF_DAY);
                     minute = localReleaseDateTime.get(Calendar.MINUTE) + 1;
                     break;
