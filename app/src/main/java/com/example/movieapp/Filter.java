@@ -10,7 +10,7 @@ import java.util.Calendar;
 
 public class Filter {
     // Location Codes
-    private final int ANY_LOCATIONS = 1029; // 1029 refers to theater name "Valitse alue/teatteri" aka all possible locations.
+    private static final int ANY_LOCATIONS = 1029; // 1029 refers to theater name "Valitse alue/teatteri" aka all possible locations.
 
     // Calendar Codes
     public static final int START_DT_MIN = 0;     // represents startDateTimeMin
@@ -46,15 +46,20 @@ public class Filter {
     public static Filter getInstance() {
         if (instance == null) {
             instance = new Filter();
-            clearTitle();
-            startDateTimeMin = Calendar.getInstance();
-            clearStartDateMin();
-            clearStartTimeMin();
-            startDateTimeMax = Calendar.getInstance();
-            clearStartDateMax();
-            clearStartTimeMax();
+            clearFilter();
         }
         return instance;
+    }
+
+    public static void clearFilter() {
+        locationID = ANY_LOCATIONS;
+        clearTitle();
+        startDateTimeMin = Calendar.getInstance();
+        clearStartDateMin();
+        clearStartTimeMin();
+        startDateTimeMax = Calendar.getInstance();
+        clearStartDateMax();
+        clearStartTimeMax();
     }
 
     /**
@@ -383,7 +388,7 @@ public class Filter {
                 getMinuteFrom(START_DT_MAX),
                 getCalendar(START_DT_MAX).getTime().getTime(),
                 locationID,
-                "Location name placeholder"
+                Database.getInstance().getTheatre(locationID)
         );
 
         return s;
@@ -446,8 +451,11 @@ public class Filter {
         if (locationID > ANY_LOCATIONS) {
             allShows = database.getShowsAt(locationID);
         } else {
-            allShows = database.getShowsAt(ANY_LOCATIONS);
+            allShows = database.getShowsAt(1029);
         }
+
+        System.out.println(locationID);
+        System.out.println(allShows);
 
         // Check other search criteria
         for (Show show : allShows) {
