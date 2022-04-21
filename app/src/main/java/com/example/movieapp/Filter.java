@@ -9,38 +9,34 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Filter {
+    // Location Codes
+    private final int ANY_LOCATIONS = 1029; // 1029 refers to theater name "Valitse alue/teatteri" aka all possible locations.
 
-    /**
-     * Calendar Codes
-     */
-    public static final int START_TIME_MIN = 0;     // represents startDateTimeMin
-    public static final int START_TIME_MAX = 1;     // represents startDateTimeMax
-    public static final int START_TIME_BOTH = 2;
+    // Calendar Codes
+    public static final int START_DT_MIN = 0;     // represents startDateTimeMin
+    public static final int START_DT_MAX = 1;     // represents startDateTimeMax
+    public static final int START_DT_BOTH = 2;
 
-    /**
-     * Field Codes
-     */
+    // Field Codes
     public static final int FIELD_TITLE = 0;
     public static final int FIELD_DATE = 1;
     public static final int FIELD_TIME_MIN = 2;
     public static final int FIELD_TIME_MAX = 3;
 
-    /**
-     * Error Messages
-     */
+    // Error Messages
     public static final String ERR_CALENDAR_NOT_FOUND = "Specified calendar not found: ";
     public static final String ERR_FIELD_NOT_FOUND = "Specified field not found: ";
 
-    /**
-     * Attributes
-     */
+    // Attributes
     private static Calendar startDateTimeMin;   // Stores minimum start time; year, month, day, hour, and minute
     private static Calendar startDateTimeMax;   // Stores maximum start time; year, month, day, hour, and minute
     private static String title;
     private static int locationID;                // stores the location id of a theater
+    private CalendarConverter calendarConverter = CalendarConverter.getInstance();
 
     private static Filter instance = null;
 
+    // Constructors
     private Filter() { }
 
     /**
@@ -94,13 +90,13 @@ public class Filter {
      */
     public void setDateFor(int calendar, int year, int month, int day) {
         switch (calendar) {
-            case (START_TIME_MIN):
+            case (START_DT_MIN):
                 setDate(startDateTimeMin, year, month, day);
                 break;
-            case (START_TIME_MAX):
+            case (START_DT_MAX):
                 setDate(startDateTimeMax, year, month, day);
                 break;
-            case (START_TIME_BOTH):
+            case (START_DT_BOTH):
                 setDate(startDateTimeMin, year, month, day);
                 setDate(startDateTimeMax, year, month, day);
                 break;
@@ -118,10 +114,10 @@ public class Filter {
      */
     public void setTimeFor(int calendar, int hour, int minute) {
         switch (calendar) {
-            case (START_TIME_MIN):
+            case (START_DT_MIN):
                 setTimeFor(startDateTimeMin, hour, minute);
                 break;
-            case (START_TIME_MAX):
+            case (START_DT_MAX):
                 setTimeFor(startDateTimeMax, hour, minute);
                 break;
             default:
@@ -139,10 +135,10 @@ public class Filter {
     public Calendar getCalendar(int calendar) {
         Calendar outputCalendar = null;
         switch (calendar) {
-            case (START_TIME_MIN):
+            case (START_DT_MIN):
                 outputCalendar = startDateTimeMin;
                 break;
-            case (START_TIME_MAX):
+            case (START_DT_MAX):
                 outputCalendar = startDateTimeMax;
                 break;
             default:
@@ -159,10 +155,10 @@ public class Filter {
     public int getYearFrom(int calendarCode) {
         int year = -1;
         switch (calendarCode) {
-            case (START_TIME_MIN):
+            case (START_DT_MIN):
                 year = startDateTimeMin.get(Calendar.YEAR);
                 break;
-            case (START_TIME_MAX):
+            case (START_DT_MAX):
                 year = startDateTimeMax.get(Calendar.YEAR);
                 break;
             default:
@@ -179,10 +175,10 @@ public class Filter {
     public int getMonthFrom(int calendarCode) {
         int month = -1;
         switch (calendarCode) {
-            case (START_TIME_MIN):
+            case (START_DT_MIN):
                 month = startDateTimeMin.get(Calendar.MONTH) + 1;
                 break;
-            case (START_TIME_MAX):
+            case (START_DT_MAX):
                 month = startDateTimeMax.get(Calendar.MONTH) + 1;
                 break;
             default:
@@ -199,10 +195,10 @@ public class Filter {
     public int getDayFrom(int calendarCode) {
         int day = -1;
         switch (calendarCode) {
-            case (START_TIME_MIN):
+            case (START_DT_MIN):
                 day = startDateTimeMin.get(Calendar.DAY_OF_MONTH);
                 break;
-            case (START_TIME_MAX):
+            case (START_DT_MAX):
                 day = startDateTimeMax.get(Calendar.DAY_OF_MONTH);
                 break;
             default:
@@ -219,10 +215,10 @@ public class Filter {
     public int getHourFrom(int calendarCode) {
         int hour = -1;
         switch (calendarCode) {
-            case (START_TIME_MIN):
+            case (START_DT_MIN):
                 hour = startDateTimeMin.get(Calendar.HOUR_OF_DAY);
                 break;
-            case (START_TIME_MAX):
+            case (START_DT_MAX):
                 hour = startDateTimeMax.get(Calendar.HOUR_OF_DAY);
                 break;
             default:
@@ -239,10 +235,10 @@ public class Filter {
     public int getMinuteFrom(int calendarCode) {
         int minute = -1;
         switch (calendarCode) {
-            case (START_TIME_MIN):
+            case (START_DT_MIN):
                 minute = startDateTimeMin.get(Calendar.MINUTE);
                 break;
-            case (START_TIME_MAX):
+            case (START_DT_MAX):
                 minute = startDateTimeMax.get(Calendar.MINUTE);
                 break;
             default:
@@ -260,10 +256,10 @@ public class Filter {
     private long getTime(int calendar) {
         Calendar dateTime = Calendar.getInstance();
         switch (calendar) {
-            case (START_TIME_MIN):
+            case (START_DT_MIN):
                 dateTime = startDateTimeMin;
                 break;
-            case (START_TIME_MAX):
+            case (START_DT_MAX):
                 dateTime = startDateTimeMax;
                 break;
             default:
@@ -282,7 +278,7 @@ public class Filter {
     }
 
     public void setLocationID(String name) {
-        locationID = Database.getInstance().getTheatreByName(name);
+        locationID = Database.getInstance().getTheatre(name).getID();
     }
 
     public int getLocationID() {
@@ -374,18 +370,18 @@ public class Filter {
         s = String.format(
                 s,
                 title,
-                getDayFrom(START_TIME_MIN),
-                getMonthFrom(START_TIME_MIN),
-                getYearFrom(START_TIME_MIN),
-                getHourFrom(START_TIME_MIN),
-                getMinuteFrom(START_TIME_MIN),
-                getCalendar(START_TIME_MIN).getTime().getTime(),
-                getDayFrom(START_TIME_MAX),
-                getMonthFrom(START_TIME_MAX),
-                getYearFrom(START_TIME_MAX),
-                getHourFrom(START_TIME_MAX),
-                getMinuteFrom(START_TIME_MAX),
-                getCalendar(START_TIME_MAX).getTime().getTime(),
+                getDayFrom(START_DT_MIN),
+                getMonthFrom(START_DT_MIN),
+                getYearFrom(START_DT_MIN),
+                getHourFrom(START_DT_MIN),
+                getMinuteFrom(START_DT_MIN),
+                getCalendar(START_DT_MIN).getTime().getTime(),
+                getDayFrom(START_DT_MAX),
+                getMonthFrom(START_DT_MAX),
+                getYearFrom(START_DT_MAX),
+                getHourFrom(START_DT_MAX),
+                getMinuteFrom(START_DT_MAX),
+                getCalendar(START_DT_MAX).getTime().getTime(),
                 locationID,
                 "Location name placeholder"
         );
@@ -393,44 +389,79 @@ public class Filter {
         return s;
     }
 
+    private boolean checkTitle(Show show) {
+        boolean match = true;
+        if (title != null) {
+            String t1 = show.getTitle().toUpperCase();
+            String t2 = title.toUpperCase();
+            if (!t1.contains(t2)) {
+                match = false;
+            }
+        }
+        return match;
+    }
+
+    private boolean checkDate(Show show) {
+        boolean match = true;
+        long filterDate = calendarConverter.getLongDate(startDateTimeMin);
+        long showDate = calendarConverter.getLongDate(show.getDate());
+
+        if (showDate != filterDate) {
+            match = false;
+        }
+
+        return match;
+    }
+
+    private boolean checkTime(Show show) {
+        boolean match = true;
+        long filterTimeMin = calendarConverter.getLongTime(startDateTimeMin);
+        long filterTimeMax = calendarConverter.getLongTime(startDateTimeMax);
+        long showStartTime = calendarConverter.getLongTime(show.getStartDateTime());
+
+        if ((showStartTime < filterTimeMin) || (showStartTime > filterTimeMax)) {
+            match = false;
+        }
+
+        return match;
+    }
+
+    /**
+     * Goes through all shows,
+     * checks which shows match all search criteria,
+     * adds matching shows to filtered list (ArrayList),
+     * and returns the filtered list.
+     * @return ArrayList containing shows (objects) that match all search criteria
+     */
     public ArrayList<Show> getShows() {
         System.out.println("#### Filter.getShows() ######################################");
-        ArrayList<Show> filtered = new ArrayList<>();
-        for (Show show : Database.getInstance().getShows()) {
-            boolean matchesCriteria = true;
-            // Filter by theatre, 1029 means all locations, > 1029 means a specific location is selected
-//            if (locationID > 1029) {
-//                if (show.getLocationID() != locationID) {
-//                    filtered.remove(show);
-//                }
-//            }
+        ArrayList<Show> allShows;
+        ArrayList<Show> filteredShows = new ArrayList<>();
+        Database database = Database.getInstance();
 
-            // Filter by title
-            if (title != null) {
-                String t1 = show.getTitle().toUpperCase();
-                String t2 = title.toUpperCase();
-                if (!t1.contains(t2)) {
-                    matchesCriteria = false;
-                }
-            }
+        /* Check if location ID is specified.
+         * if true, search from the given location's list
+         * if false, search from all shows
+         */
+        if (locationID > ANY_LOCATIONS) {
+            allShows = database.getShowsAt(locationID);
+        } else {
+            allShows = database.getShowsAt(ANY_LOCATIONS);
+        }
 
-            // Filter by date and time
-            long min = getTime(START_TIME_MIN);
-            long max = getTime(START_TIME_MAX);
-            long test = show.getStartTime();
-            if (test < min) {
-                matchesCriteria = false;
-            }
-            if (test > max) {
-                matchesCriteria = false;
-            }
-            if (matchesCriteria) {
-                filtered.add(show);
+        // Check other search criteria
+        for (Show show : allShows) {
+            boolean titleMatches = checkTitle(show);
+            boolean dateMatches = checkDate(show);
+            boolean timeMatches = checkTime(show);
+
+            if (titleMatches && dateMatches && timeMatches) {
+                filteredShows.add(show);
             }
         }
 
         System.out.println("#############################################################");
-        return filtered;
+        return filteredShows;
     }
 }
 
