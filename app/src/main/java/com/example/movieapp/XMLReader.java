@@ -93,11 +93,11 @@ public class XMLReader {
      * @return ArrayList of found shows (objects)
      */
     public ArrayList<Show> getShowsAt(int area) {
+        System.out.println("#### XMLReader.getShowsAt(int id) ###################################");
         final String DELIMIT = "&";
         StringBuilder url = new StringBuilder("https://www.finnkino.fi/xml/Schedule/?");
         url.append("nrOfDays=" + nrOfDays); // set maximum number of days to display
         url.append(DELIMIT + "area=" + area);
-        System.out.println(url);
 
         ArrayList<Show> shows = new ArrayList<Show>();
         NodeList showNodes = getNodesByTagName(url.toString(), "Show");
@@ -140,6 +140,7 @@ public class XMLReader {
                 shows.add(show);
             }
         }
+        System.out.println("#####################################################################");
         return shows;
     }
 }
