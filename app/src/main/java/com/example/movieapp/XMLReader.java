@@ -15,6 +15,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 public class XMLReader {
     private static XMLReader instance = null;
+    private int nrOfDays = 31;
 
     public XMLReader() { }
 
@@ -78,8 +79,8 @@ public class XMLReader {
             if (theatreNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element theatreElement = (Element) theatreNode;
                 Theatre theatre = new Theatre();
-                theatre.setID(Integer.parseInt(theatreElement.getElementsByTagName("ID").item(0).getTextContent()));
-                theatre.setName(theatreElement.getElementsByTagName("Name").item(0).getTextContent());
+                theatre.setID(Integer.parseInt(getTextContent(theatreElement, "ID")));
+                theatre.setName(getTextContent(theatreElement, "Name"));
                 theatres.add(theatre);
             }
         }
@@ -91,32 +92,51 @@ public class XMLReader {
      * and converts the elements to Show objects.
      * @return ArrayList of found shows (objects)
      */
-    public ArrayList<Show> getShows() {
-        String scheduleURL = "https://www.finnkino.fi/xml/Schedule";
-        String showTag = "Show";
+    public ArrayList<Show> getShowsAt(int area) {
+        final String DELIMIT = "&";
+        StringBuilder url = new StringBuilder("https://www.finnkino.fi/xml/Schedule/?");
+        url.append("nrOfDays=" + nrOfDays); // set maximum number of days to display
+        url.append(DELIMIT + "area=" + area);
+        System.out.println(url);
+
         ArrayList<Show> shows = new ArrayList<Show>();
-        NodeList showNodes = getNodesByTagName(scheduleURL, showTag);
+        NodeList showNodes = getNodesByTagName(url.toString(), "Show");
 
         for (int i=0; i<showNodes.getLength(); i++) {
             Node showNode = showNodes.item(i);
             if (showNode.getNodeType() == Element.ELEMENT_NODE) {
                 Element showElement = (Element) showNode;
                 Show show = new Show();
-                show.setID(getTextContent(showElement, "ID"));
-                show.setDateTime(Show.START_DATE_TIME, getTextContent(showElement, "dttmShowStart"));
-                show.setDateTime(Show.END_DATE_TIME, getTextContent(showElement, "dttmShowEnd"));
-                show.setEventID(getTextContent(showElement, "EventID"));
-                show.setTitle(getTextContent(showElement, "Title"));
-                show.setOriginalTitle(getTextContent(showElement, "OriginalTitle"));
-                show.setProductionYear(getTextContent(showElement, "ProductionYear"));
-                show.setLength(getTextContent(showElement, "LengthInMinutes"));
-                show.setDateTime(Show.LOCAL_RELEASE, getTextContent(showElement, "dtLocalRelease"));
-                show.setRating(getTextContent(showElement, "Rating"));
-                show.setEventType(getTextContent(showElement, "EventType"));
-                show.setGenres(getTextContent(showElement, "Genres"));
-                show.setLocationID(getTextContent(showElement, "TheatreID"));
-                show.setLocationName(getTextContent(showElement, "TheatreAndAuditorium"));
-                show.setPresentationMethodAndLanguage(getTextContent(showElement, "PresentationMethodAndLanguage"));
+                show.setID(
+                        getTextContent(showElement, "ID"));
+                show.setStartDateTime(
+                        Parser.parseDateTime(getTextContent(showElement, "dttmShowStart")));
+                show.setEndDateTime(
+                        Parser.parseDateTime(getTextContent(showElement, "dttmShowEnd")));
+                show.setEventID(
+                        getTextContent(showElement, "EventID"));
+                show.setTitle(
+                        getTextContent(showElement, "Title"));
+                show.setOriginalTitle(
+                        getTextContent(showElement, "OriginalTitle"));
+                show.setProductionYear(
+                        getTextContent(showElement, "ProductionYear"));
+                show.setLength(
+                        getTextContent(showElement, "LengthInMinutes"));
+                show.setLocalReleaseDateTime(
+                        Parser.parseDateTime(getTextContent(showElement, "dtLocalRelease")));
+                show.setRating(
+                        getTextContent(showElement, "Rating"));
+                show.setEventType(
+                        getTextContent(showElement, "EventType"));
+                show.setGenres(
+                        getTextContent(showElement, "Genres"));
+                show.setLocationID(
+                        getTextContent(showElement, "TheatreID"));
+                show.setLocationName(
+                        getTextContent(showElement, "TheatreAndAuditorium"));
+                show.setPresentationMethodAndLanguage(
+                        getTextContent(showElement, "PresentationMethodAndLanguage"));
                 shows.add(show);
             }
         }
