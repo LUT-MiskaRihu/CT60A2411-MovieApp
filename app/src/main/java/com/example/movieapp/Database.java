@@ -5,22 +5,19 @@ import java.util.ArrayList;
 public class Database {
     private static ArrayList<Theatre> theatres = null;
     private static ArrayList<Show> shows = null;
-    private static ArrayList<Show> filteredShows = null;
     private static Database instance = null;
 
     public Database() {
-        System.out.println("#### Database.Database() ####################################");
-        if (theatres == null) {
-            System.out.println("\t\tHAETAAN TEATTEREITA");
-            theatres = XMLReader.getInstance().getTheatres();
-        }
-        if (shows == null) {
-            System.out.println("\t\tHAETAAN ELOKUVIA");
-            shows = XMLReader.getInstance().getShows();
-        }
-        System.out.println("#############################################################");
+        System.out.println("\t\tDatabase");
+        getTheatreInformation();
+        getShowInformation();
+        // Store all shows for future
+        // these will be saved to a local database in the future (json, xml, or csv)
+        shows = getTheatre("Valitse alue/teatteri").getShows();
     }
 
+    
+    
     public static Database getInstance() {
         if (instance == null) {
             instance = new Database();
@@ -28,47 +25,63 @@ public class Database {
         return instance;
     }
 
+    private void getTheatreInformation() {
+        // Get theatres and IDs
+        if (theatres == null) {
+            System.out.println("\t\tFetching theatre info...");
+            theatres = XMLReader.getInstance().getTheatres();
+        }
+    }
+
+    private void getShowInformation() {
+        // Get movies for each theater
+        for (Theatre t : theatres) {
+            System.out.println("\t\tFetching shows for theatre " + t.getID());
+            if (t.getShows() == null) {
+                System.out.println("\t\tDownloading data...");
+                t.addShows(XMLReader.getInstance().getShowsAt(t.getID()));
+                if (t.getShows() != null) {
+                    System.out.print("\t\tFound " + t.getShows().size() + " shows for theatre " + t.getID());
+                }
+            }
+        }
+    }
+
     public ArrayList<Theatre> getTheatres() {
-        System.out.println("#### Database.getTheatres() #################################");
         for (Theatre t : theatres) {
             System.out.println("\t\t" + t.toString());
         }
-        System.out.println("#############################################################");
         return theatres;
     }
 
-    public ArrayList<Show> getShows() {
-        System.out.println("#### Database.getShows() ####################################");
+    public ArrayList<Show> getAllShows() {
         for (Show s : shows) {
             System.out.println("\t\t" + s.toString());
         }
-        System.out.println("#############################################################");
         return shows;
     }
 
-    public String getTheatreByID(int id) {
-        //System.out.println("#### Database.getTheatreByID() ##############################");
-        String name = null;
-        for (Theatre t : theatres) {
-            if (t.getID() == id) {
-                name = t.getName();
-        //        System.out.println("\t\t" + t.getID() + ", " + t.getName());
-            }
-        }
-        //System.out.println("#############################################################");
-        return name;
+    public ArrayList<Show> getShowsAt(int id) {
+        return getTheatre(id).getShows();
     }
 
-    public int getTheatreByName(String name) {
-        //System.out.println("#### Database.getTheatreByName ##############################");
-        int id = 0;
+    public Theatre getTheatre(int id) {
+        Theatre theatre = null;
         for (Theatre t : theatres) {
-            if (t.getName().equals(name)) {
-                id = t.getID();
-        //        System.out.println("\t\t" + t.getID() + ", " + t.getName());
+            if (t.getID() == id) {
+                theatre = t;
             }
         }
-        //System.out.println("#############################################################");
-        return id;
+        return theatre;
+    }
+
+    public Theatre getTheatre(String name) {
+        Theatre theatre = null;
+        for (Theatre t : theatres) {
+            if (t.getName().equals(name)) {
+                theatre = t;
+            }
+        }
+        return theatre;
     }
 }
