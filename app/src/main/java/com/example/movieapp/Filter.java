@@ -10,7 +10,7 @@ import java.util.Calendar;
 
 public class Filter {
     // Location Codes
-    private static final int ANY_LOCATIONS = 1029; // 1029 refers to theater name "Valitse alue/teatteri" aka all possible locations.
+    private static final int ANY_LOCATION = 1029; // 1029 refers to theater name "Valitse alue/teatteri" aka all possible locations.
 
     // Calendar Codes
     public static final int START_DT_MIN = 0;     // represents startDateTimeMin
@@ -52,7 +52,7 @@ public class Filter {
     }
 
     public static void clearFilter() {
-        locationID = ANY_LOCATIONS;
+        locationID = ANY_LOCATION;
         clearTitle();
         startDateTimeMin = Calendar.getInstance();
         clearStartDateMin();
@@ -448,10 +448,10 @@ public class Filter {
          * if true, search from the given location's list
          * if false, search from all shows
          */
-        if (locationID > ANY_LOCATIONS) {
+        if (locationID != ANY_LOCATION) {
             allShows = database.getShowsAt(locationID);
         } else {
-            allShows = database.getShowsAt(1029);
+            allShows = database.getShowsAt(ANY_LOCATION);
         }
 
         System.out.println(locationID);
