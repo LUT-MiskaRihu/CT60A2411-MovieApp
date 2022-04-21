@@ -1,5 +1,7 @@
 package com.example.movieapp;
 
+import static java.lang.System.exit;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -131,6 +133,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
+    // Makes it impossible to go back to the splash screen
+    @Override
+    public void onBackPressed() { }
 
     /**
      * This function shows the DatePickerDialog when the user clicks on the date field,
