@@ -6,14 +6,18 @@ public class Database {
     private static ArrayList<Theatre> theatres = null;
     private static ArrayList<Show> shows = null;
     private static Database instance = null;
+    private XMLReader xmlReader = XMLReader.getInstance();
 
     public Database() {
-        System.out.println("\t\tDatabase");
+        System.out.println("#### Database.Database() ############################################");
         getTheatreInformation();
+        System.out.println("---------------------------------------------------------------------");
         getShowInformation();
+
         // Store all shows for future
         // these will be saved to a local database in the future (json, xml, or csv)
         shows = getTheatre("Valitse alue/teatteri").getShows();
+        System.out.println("#####################################################################");
     }
 
     
@@ -29,19 +33,23 @@ public class Database {
         // Get theatres and IDs
         if (theatres == null) {
             System.out.println("\t\tFetching theatre info...");
-            theatres = XMLReader.getInstance().getTheatres();
+            theatres = xmlReader.getTheatres();
+        }
+        for (Theatre t : theatres) {
+            System.out.println("\t\t" + t.toString());
         }
     }
 
     private void getShowInformation() {
         // Get movies for each theater
         for (Theatre t : theatres) {
-            System.out.println("\t\tFetching shows for theatre " + t.getID());
-            if (t.getShows() == null) {
+            int id = t.getID();
+            System.out.println("\t\tFetching shows for theatre " + id);
+            if (t.getShows().size() == 0) {
                 System.out.println("\t\tDownloading data...");
-                t.addShows(XMLReader.getInstance().getShowsAt(t.getID()));
+                t.addShows(xmlReader.getShowsAt(id));
                 if (t.getShows() != null) {
-                    System.out.print("\t\tFound " + t.getShows().size() + " shows for theatre " + t.getID());
+                    System.out.print("\t\tFound " + t.getShows().size() + " shows for theatre " + id);
                 }
             }
         }
