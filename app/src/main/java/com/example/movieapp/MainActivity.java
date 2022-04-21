@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         btnClearTimeMax = findViewById(R.id.btnClearTimeMax);
 
         // Initiate spinner
-        ArrayAdapter<Theatre> theatreAdapter = new ArrayAdapter<Theatre>(this, android.R.layout.simple_spinner_dropdown_item, Database.getInstance().getTheatres());
+        ArrayAdapter<Theatre> theatreAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, Database.getInstance().getTheatres());
         spnTheatres.setAdapter(theatreAdapter);
 
         filter = Filter.getInstance();
@@ -148,12 +148,12 @@ public class MainActivity extends AppCompatActivity {
             @SuppressLint("DefaultLocale")
             @Override
             public void onDateSet(DatePicker datePicker, int year, int month, int day) {
-                filter.setDateFor(Filter.START_TIME_BOTH, year, month, day);
+                filter.setDateFor(Filter.START_DT_BOTH, year, month, day);
                 etDate.setText(String.format(
                         "%02d.%02d.%04d",
-                        filter.getDayFrom(Filter.START_TIME_MIN),
-                        filter.getMonthFrom(Filter.START_TIME_MIN),
-                        filter.getYearFrom(Filter.START_TIME_MIN)
+                        filter.getDayFrom(Filter.START_DT_MIN),
+                        filter.getMonthFrom(Filter.START_DT_MIN),
+                        filter.getYearFrom(Filter.START_DT_MIN)
                 ));
             }
         };
@@ -185,9 +185,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onTimeSet(TimePicker timePicker, int hour, int minute) {
                 if (et.equals(etTimeMin)) {
-                    filter.setTimeFor(Filter.START_TIME_MIN, hour, minute);
+                    filter.setTimeFor(Filter.START_DT_MIN, hour, minute);
                 } else if (et.equals(etTimeMax)) {
-                    filter.setTimeFor(Filter.START_TIME_MAX, hour, minute);
+                    filter.setTimeFor(Filter.START_DT_MAX, hour, minute);
                 }
                 et.setText(String.format("%2d:%02d", hour, minute));
             }
@@ -216,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void search(View view) {
         pickTheatre();
-        if (filter.getHourFrom(Filter.START_TIME_MIN) >= filter.getHourFrom(Filter.START_TIME_MAX)) {
+        if (filter.getHourFrom(Filter.START_DT_MIN) >= filter.getHourFrom(Filter.START_DT_MAX)) {
             Toast.makeText(this, "Alkamisajan minimi ei voi olla suurempi kuin sen maksini!", Toast.LENGTH_LONG).show();
         } else {
             loadDebugActivity(view);
