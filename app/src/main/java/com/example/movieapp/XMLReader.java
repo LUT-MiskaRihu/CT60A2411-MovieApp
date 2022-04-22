@@ -1,5 +1,7 @@
 package com.example.movieapp;
 
+import android.util.Log;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -7,50 +9,28 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerFactory;
 
 public class XMLReader {
     private static XMLReader instance = null;
     private int nrOfDays = 31;
 
-    public XMLReader() { }
+    public XMLReader() {}
 
     public static XMLReader getInstance() {
         if (instance == null) {
             instance = new XMLReader();
         }
         return instance;
-    }
-
-    /**
-     * Takes XML url and tag name as parameters, returns NodeList of found elements.
-     * @param url XML url
-     * @param tagName XML tag name
-     * @return NodeList of found nodes
-     */
-    private NodeList getNodesByTagName(String url, String tagName) {
-        NodeList nodes = null;
-        try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document document = documentBuilder.parse(url);
-            document.getDocumentElement().normalize();
-            nodes = document.getElementsByTagName(tagName);
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-            System.err.println("ParserConfigurationException");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("IOException");
-        } catch (SAXException e) {
-            e.printStackTrace();
-            System.err.println("SAXException");
-        }
-        return nodes;
     }
 
     /**
@@ -72,7 +52,7 @@ public class XMLReader {
         String theatresURL = "https://www.finnkino.fi/xml/TheatreAreas";
         String theatreTag = "TheatreArea";
         ArrayList<Theatre> theatres = new ArrayList<Theatre>();
-        NodeList theatreNodes = getNodesByTagName(theatresURL, theatreTag);
+        NodeList theatreNodes = XMLParser.getNodesByTagName(theatresURL, theatreTag);
 
         for (int i=0; i<theatreNodes.getLength(); i++) {
             Node theatreNode = theatreNodes.item(i);
@@ -100,7 +80,7 @@ public class XMLReader {
         url.append(DELIMIT + "area=" + area);
 
         ArrayList<Show> shows = new ArrayList<Show>();
-        NodeList showNodes = getNodesByTagName(url.toString(), "Show");
+        NodeList showNodes = XMLParser.getNodesByTagName(url.toString(), "Show");
 
         for (int i=0; i<showNodes.getLength(); i++) {
             Node showNode = showNodes.item(i);

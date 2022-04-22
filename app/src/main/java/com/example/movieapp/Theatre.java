@@ -2,9 +2,10 @@ package com.example.movieapp;
 
 import androidx.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Theatre {
+public class Theatre implements Serializable {
     private int id;
     private String name;
     private ArrayList<Show> shows = new ArrayList<>();

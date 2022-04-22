@@ -158,7 +158,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:hapticFeedbackEnabled="false"
-                android:onClick="search"
                 android:text="Tee haku"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
 

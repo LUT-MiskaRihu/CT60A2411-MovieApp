@@ -39,7 +39,7 @@ public class SearchActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_search);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
@@ -101,6 +101,16 @@ public class SearchActivity extends AppCompatActivity {
                 else if (view == btnClearTimeMax) {
                     filter.clearField(Filter.FIELD_TIME_MAX);
                     etTimeMax.setText(null);
+                }
+
+                // Search
+                else if (view == btnSearch) {
+                    pickTheatre();
+                    if (filter.getHourFrom(Filter.START_DT_MIN) >= filter.getHourFrom(Filter.START_DT_MAX)) {
+                        Toast.makeText(SearchActivity.this, "Tarkista asettamasi alkamisajat", Toast.LENGTH_SHORT).show();
+                    } else {
+                        loadDebugActivity(view);
+                    }
                 }
             }
         };
@@ -212,19 +222,6 @@ public class SearchActivity extends AppCompatActivity {
      */
     public void pickTheatre() {
         filter.setLocationID(spnTheatres.getSelectedItem().toString());
-    }
-
-    /**
-     *
-     * @param view
-     */
-    public void search(View view) {
-        pickTheatre();
-        if (filter.getHourFrom(Filter.START_DT_MIN) >= filter.getHourFrom(Filter.START_DT_MAX)) {
-            Toast.makeText(this, "Alkamisajan minimi ei voi olla suurempi kuin sen maksini!", Toast.LENGTH_LONG).show();
-        } else {
-            loadDebugActivity(view);
-        }
     }
 
     public void showFilter() {

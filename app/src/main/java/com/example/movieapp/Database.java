@@ -56,16 +56,10 @@ public class Database {
     }
 
     public ArrayList<Theatre> getTheatres() {
-        for (Theatre t : theatres) {
-            System.out.println("\t\t" + t.toString());
-        }
         return theatres;
     }
 
     public ArrayList<Show> getAllShows() {
-        for (Show s : shows) {
-            System.out.println("\t\t" + s.toString());
-        }
         return shows;
     }
 
