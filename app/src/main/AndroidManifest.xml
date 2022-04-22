@@ -15,7 +15,7 @@
 
 
         <activity
-            android:name=".SplashScreen"
+            android:name=".SplashScreenActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:exported="true"
             android:theme="@style/Theme.Test.Fullscreen">
@@ -33,7 +33,7 @@
             android:name=".DebugActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".SearchActivity"
             android:label="Hae elokuvia"
             android:exported="false" >
         </activity>

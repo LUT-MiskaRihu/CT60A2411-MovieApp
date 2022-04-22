@@ -1,7 +1,5 @@
 package com.example.movieapp;
 
-import static java.lang.System.exit;
-
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
@@ -23,7 +21,7 @@ import android.widget.Toast;
 
 import java.util.Calendar;
 
-public class MainActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity {
     private Spinner spnTheatres;
     private EditText etTitle;
     private EditText etDate;
@@ -166,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog;
         datePickerDialog = new DatePickerDialog(
-                MainActivity.this,
+                SearchActivity.this,
                 onDateSetListener,
                 year,
                 month,
@@ -200,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
         };
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(
-                MainActivity.this,
+                SearchActivity.this,
                 onTimeSetListener,
                 12,
                 0,
@@ -230,13 +228,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void showFilter() {
-        System.out.println("#### MainActivity.showFilter() ##############################");
+        System.out.println("#### SearchActivity.showFilter() ##############################");
         System.out.println(filter.toString());
         System.out.println("#############################################################");
     }
 
     public void loadDebugActivity(View view) {
-        Intent intent = new Intent(MainActivity.this, DebugActivity.class);
+        Intent intent = new Intent(SearchActivity.this, DebugActivity.class);
         startActivity(intent);
     }
 }

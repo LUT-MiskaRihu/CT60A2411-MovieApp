@@ -10,7 +10,7 @@ import android.os.Handler;
 import android.os.StrictMode;
 
 @SuppressLint("CustomSplashScreen")
-public class SplashScreen extends AppCompatActivity {
+public class SplashScreenActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +34,7 @@ public class SplashScreen extends AppCompatActivity {
         h.postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashScreen.this, MainActivity.class);
+                Intent intent = new Intent(SplashScreenActivity.this, SearchActivity.class);
                 startActivity(intent);
             }
         }, 500);
