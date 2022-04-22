@@ -81,8 +81,8 @@ public class SearchActivity extends AppCompatActivity {
 
                 // Clear title
                 else if (view == btnClearTitle) {
-                    filter.clearField(Filter.FIELD_TITLE);
                     etTitle.setText(null);
+                    filter.clearField(Filter.FIELD_TITLE);
                 }
 
                 // Clear date

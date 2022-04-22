@@ -313,10 +313,10 @@ public class Show {
     public String toString() {
         String movie;
 
-        movie = "\n" + getTitle().toUpperCase() + " (K-" + getRating() + ")" + "\n\n\n" +
-                "Esitysaika: " + getDateString(START_DATE_TIME) + " klo " + getTimeString(START_DATE_TIME) + " - " + getTimeString(END_DATE_TIME) + "\n" +
-                "Esityspaikka: " + getLocationName() + "\n\n" +
-                getGenres() + "\n";
+        movie = "\n" + getTitle().toUpperCase() + " (" + getRating() + ")" + "\n\n" +
+                getGenres() + "\n\n\n" +
+                getLocationName() + "\n" +
+        getDateString(START_DATE_TIME) + " klo " + getTimeString(START_DATE_TIME) + " - " + getTimeString(END_DATE_TIME) + "\n";
         return movie;
     }
 }
