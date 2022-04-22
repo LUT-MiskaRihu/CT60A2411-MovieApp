@@ -18,6 +18,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         getSupportActionBar().hide();
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
+        ApplicationContext.setContext(getApplicationContext());
 
         Handler h = new Handler();
         h.postDelayed(new Runnable() {

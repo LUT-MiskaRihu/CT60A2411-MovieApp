@@ -6,7 +6,7 @@ public class Database {
     private static ArrayList<Theatre> theatres = null;
     private static ArrayList<Show> shows = null;
     private static Database instance = null;
-    private XMLReader xmlReader = XMLReader.getInstance();
+    private XMLTransformer xmlTransformer = XMLTransformer.getInstance();
 
     public Database() {
         System.out.println("#### Database.Database() ############################################");
@@ -33,7 +33,7 @@ public class Database {
         // Get theatres and IDs
         if (theatres == null) {
             System.out.println("\t\tFetching theatre info...");
-            theatres = xmlReader.getTheatres();
+            theatres = xmlTransformer.getTheatres();
         }
         for (Theatre t : theatres) {
             System.out.println("\t\t" + t.toString());
@@ -47,7 +47,7 @@ public class Database {
             System.out.println("\t\tFetching shows for theatre " + id);
             if (t.getShows().size() == 0) {
                 System.out.println("\t\tDownloading data...");
-                t.addShows(xmlReader.getShowsAt(id));
+                t.addShows(xmlTransformer.getShowsAt(id));
                 if (t.getShows() != null) {
                     System.out.print("\t\tFound " + t.getShows().size() + " shows for theatre " + id);
                 }

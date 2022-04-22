@@ -3,14 +3,8 @@ package com.example.movieapp;
 import android.content.Context;
 import android.util.Log;
 
-import org.w3c.dom.Document;
-
-import java.io.FileWriter;
+import java.io.File;
 import java.io.OutputStreamWriter;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 public class XMLWriter {
     private static XMLWriter instance = null;
@@ -24,24 +18,12 @@ public class XMLWriter {
         return instance;
     }
 
-    public void saveRawXML(Document document, String filename) {
-        String task = "Failed to save raw XML: ";
-        try {
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            Transformer transformer = transformerFactory.newTransformer();
-            FileWriter fileWriter = new FileWriter(filename);
-            transformer.transform(new DOMSource(document), new StreamResult(fileWriter));
-        }
-        catch (Exception e) {
-            Log.e("Exception", "Failed to " + task + ": " + e.toString());
-            e.printStackTrace();
-        }
-    }
-
-    private void writeToFile(String data, Context context) {
+    public static File writeRawText(String data, String filename) {
         String task = "write to a file";
+        Context context = ApplicationContext.getAppContext();
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
+            OutputStreamWriter outputStreamWriter;
+            outputStreamWriter = new OutputStreamWriter(context.openFileOutput(filename, Context.MODE_PRIVATE));
             outputStreamWriter.write(data);
             outputStreamWriter.close();
         }
@@ -49,5 +31,6 @@ public class XMLWriter {
             Log.e("Exception", "Failed to " + task + ": " + e.toString());
             e.printStackTrace();
         }
+        return new File(context.getFilesDir(), filename);
     }
 }
