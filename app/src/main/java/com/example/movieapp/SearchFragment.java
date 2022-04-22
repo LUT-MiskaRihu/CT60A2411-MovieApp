@@ -1,16 +1,17 @@
 package com.example.movieapp;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -19,9 +20,19 @@ import android.widget.Spinner;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import java.util.Calendar;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
-public class SearchActivity extends AppCompatActivity {
+import com.example.movieapp.ui.main.PageViewModel;
+import com.example.movieapp.ui.main.SectionsPagerAdapter;
+
+import java.util.Calendar;
+import java.util.zip.Inflater;
+
+public class SearchFragment extends Fragment {
+
+    private View view;
     private Spinner spnTheatres;
     private EditText etTitle;
     private EditText etDate;
@@ -34,28 +45,36 @@ public class SearchActivity extends AppCompatActivity {
     private Button btnSearch;
     private TextWatcher textWatcher;
 
+    private Context context = this.getContext();
+
     private Filter filter;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.fragment_search);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_search, container, false);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
         // Assign variables to UI elements
-        spnTheatres = findViewById(R.id.spnTheaters);
-        etTitle = findViewById(R.id.etTitle);
-        etDate = findViewById(R.id.etDate);
-        etTimeMin = findViewById(R.id.etTimeMin);
-        etTimeMax = findViewById(R.id.etTimeMax);
-        btnClearTitle = findViewById(R.id.btnClearTitle);
-        btnClearDate = findViewById(R.id.btnClearDate);
-        btnClearTimeMin = findViewById(R.id.btnClearTimeMin);
-        btnClearTimeMax = findViewById(R.id.btnClearTimeMax);
+        spnTheatres = getView().findViewById(R.id.spnTheaters);
+        etTitle = view.findViewById(R.id.etTitle);
+        etDate = view.findViewById(R.id.etDate);
+        etTimeMin = view.findViewById(R.id.etTimeMin);
+        etTimeMax = view.findViewById(R.id.etTimeMax);
+        btnClearTitle = view.findViewById(R.id.btnClearTitle);
+        btnClearDate = view.findViewById(R.id.btnClearDate);
+        btnClearTimeMin = view.findViewById(R.id.btnClearTimeMin);
+        btnClearTimeMax = view.findViewById(R.id.btnClearTimeMax);
 
         // Initiate spinner
-        ArrayAdapter<Theatre> theatreAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, Database.getInstance().getTheatres());
+        ArrayAdapter<Theatre> theatreAdapter = new ArrayAdapter<Theatre>(getContext(), android.R.layout.simple_spinner_dropdown_item, Database.getInstance().getTheatres());
         spnTheatres.setAdapter(theatreAdapter);
 
         filter = Filter.getInstance();
@@ -102,6 +121,17 @@ public class SearchActivity extends AppCompatActivity {
                     filter.clearField(Filter.FIELD_TIME_MAX);
                     etTimeMax.setText(null);
                 }
+
+                // Search
+                else if (view == btnSearch) {
+                    pickTheatre();
+                    if (filter.getHourFrom(Filter.START_DT_MIN) >= filter.getHourFrom(Filter.START_DT_MAX)) {
+                        Toast.makeText(getActivity(), "Alkamisajan minimi ei voi olla suurempi kuin sen maksini!", Toast.LENGTH_LONG).show();
+                    } else {
+                        Intent intent = new Intent(getActivity(), DebugActivity.class);
+                        getActivity().startActivity(intent);
+                    }
+                }
             }
         };
 
@@ -129,12 +159,7 @@ public class SearchActivity extends AppCompatActivity {
                 filter.setTitle(etTitle.getText().toString());
             }
         });
-
     }
-
-    // Makes it impossible to go back to the splash screen
-    @Override
-    public void onBackPressed() { }
 
     /**
      * This function shows the DatePickerDialog when the user clicks on the date field,
@@ -164,7 +189,7 @@ public class SearchActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog;
         datePickerDialog = new DatePickerDialog(
-                SearchActivity.this,
+                getContext(),
                 onDateSetListener,
                 year,
                 month,
@@ -198,7 +223,7 @@ public class SearchActivity extends AppCompatActivity {
         };
 
         TimePickerDialog timePickerDialog = new TimePickerDialog(
-                SearchActivity.this,
+                getContext(),
                 onTimeSetListener,
                 12,
                 0,
@@ -214,19 +239,6 @@ public class SearchActivity extends AppCompatActivity {
         filter.setLocationID(spnTheatres.getSelectedItem().toString());
     }
 
-    /**
-     *
-     * @param view
-     */
-    public void search(View view) {
-        pickTheatre();
-        if (filter.getHourFrom(Filter.START_DT_MIN) >= filter.getHourFrom(Filter.START_DT_MAX)) {
-            Toast.makeText(this, "Alkamisajan minimi ei voi olla suurempi kuin sen maksini!", Toast.LENGTH_LONG).show();
-        } else {
-            loadDebugActivity(view);
-        }
-    }
-
     public void showFilter() {
         System.out.println("#### SearchActivity.showFilter() ##############################");
         System.out.println(filter.toString());
@@ -234,7 +246,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void loadDebugActivity(View view) {
-        Intent intent = new Intent(SearchActivity.this, DebugActivity.class);
+        Intent intent = new Intent(getContext(), DebugActivity.class);
         startActivity(intent);
     }
 }

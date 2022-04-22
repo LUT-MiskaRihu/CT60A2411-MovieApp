@@ -15,7 +15,7 @@ public class DebugActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_debug);
+        setContentView(R.layout.activity_results);
         button = findViewById(R.id.button);
         search();
         button.setOnClickListener(new View.OnClickListener() {
@@ -30,7 +30,7 @@ public class DebugActivity extends AppCompatActivity {
     public void search() {
         FragmentManager manager = getSupportFragmentManager();
         FragmentTransaction transaction = manager.beginTransaction();
-        transaction.replace(R.id.frame, new TestFragment());
+        transaction.replace(R.id.frame, new SearchResultsFragment());
         transaction.commit();
     }
 }
