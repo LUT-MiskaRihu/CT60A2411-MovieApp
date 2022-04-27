@@ -55,7 +55,7 @@ public class SearchActivity extends AppCompatActivity {
         btnClearTimeMax = findViewById(R.id.btnClearTimeMax);
 
         // Initiate spinner
-        ArrayAdapter<Theatre> theatreAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, Database.getInstance().getTheatres());
+        ArrayAdapter<Theatre> theatreAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, Database.getTheatres());
         spnTheatres.setAdapter(theatreAdapter);
 
         filter = Filter.getInstance();

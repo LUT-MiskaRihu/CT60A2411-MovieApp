@@ -14,6 +14,11 @@ public class Theatre {
         name = null;
     }
 
+    public Theatre(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public Theatre(int id, String name, ArrayList<Show> shows) {
         this.id = id;
         this.name = name;

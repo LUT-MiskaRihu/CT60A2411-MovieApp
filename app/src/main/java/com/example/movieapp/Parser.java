@@ -7,12 +7,12 @@ import java.util.Date;
 
 public class Parser {
     @SuppressLint("SimpleDateFormat")
-    public static final SimpleDateFormat dtFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 
     public static Date parseDateTime(String dateTime) {
         Date date = null;
         try {
-            date = dtFormatter.parse(dateTime);
+            date = SIMPLE_DATE_FORMAT.parse(dateTime);
         } catch (ParseException e) {
             e.printStackTrace();
         }

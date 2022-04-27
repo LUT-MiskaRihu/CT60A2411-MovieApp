@@ -1,6 +1,7 @@
 package com.example.movieapp;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 
 import androidx.annotation.Discouraged;
 import androidx.annotation.NonNull;
@@ -23,16 +24,11 @@ public class Filter {
     public static final int FIELD_TIME_MIN = 2;
     public static final int FIELD_TIME_MAX = 3;
 
-    // Error Messages
-    public static final String ERR_CALENDAR_NOT_FOUND = "Specified calendar not found: ";
-    public static final String ERR_FIELD_NOT_FOUND = "Specified field not found: ";
-
     // Attributes
     private static Calendar startDateTimeMin;   // Stores minimum start time; year, month, day, hour, and minute
     private static Calendar startDateTimeMax;   // Stores maximum start time; year, month, day, hour, and minute
     private static String title;
     private static int locationID;                // stores the location id of a theater
-    private CalendarConverter calendarConverter = CalendarConverter.getInstance();
 
     private static Filter instance = null;
 
@@ -106,7 +102,7 @@ public class Filter {
                 setDate(startDateTimeMax, year, month, day);
                 break;
             default:
-                System.err.println(ERR_CALENDAR_NOT_FOUND + calendar);
+                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendar);
                 break;
         }
     }
@@ -126,7 +122,7 @@ public class Filter {
                 setTimeFor(startDateTimeMax, hour, minute);
                 break;
             default:
-                System.err.println(ERR_CALENDAR_NOT_FOUND + calendar);
+                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendar);
                 break;
         }
     }
@@ -147,7 +143,7 @@ public class Filter {
                 outputCalendar = startDateTimeMax;
                 break;
             default:
-                System.err.println(ERR_CALENDAR_NOT_FOUND + calendar);
+                System.err.println(ErrorMessages.ERR_FILTER_FIELD_NOT_FOUND + calendar);
                 break;
         }
         return outputCalendar;
@@ -167,7 +163,7 @@ public class Filter {
                 year = startDateTimeMax.get(Calendar.YEAR);
                 break;
             default:
-                System.err.println(ERR_CALENDAR_NOT_FOUND + calendarCode);
+                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendarCode);
                 break;
         }
         return year;
@@ -187,7 +183,7 @@ public class Filter {
                 month = startDateTimeMax.get(Calendar.MONTH) + 1;
                 break;
             default:
-                System.err.println(ERR_CALENDAR_NOT_FOUND + calendarCode);
+                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendarCode);
                 break;
         }
         return month;
@@ -207,7 +203,7 @@ public class Filter {
                 day = startDateTimeMax.get(Calendar.DAY_OF_MONTH);
                 break;
             default:
-                System.err.println(ERR_CALENDAR_NOT_FOUND + calendarCode);
+                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendarCode);
                 break;
         }
         return day;
@@ -227,7 +223,7 @@ public class Filter {
                 hour = startDateTimeMax.get(Calendar.HOUR_OF_DAY);
                 break;
             default:
-                System.err.println(ERR_CALENDAR_NOT_FOUND + calendarCode);
+                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendarCode);
                 break;
         }
         return hour;
@@ -247,7 +243,7 @@ public class Filter {
                 minute = startDateTimeMax.get(Calendar.MINUTE);
                 break;
             default:
-                System.err.println(ERR_CALENDAR_NOT_FOUND + calendarCode);
+                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendarCode);
                 break;
         }
         return minute;
@@ -268,7 +264,7 @@ public class Filter {
                 dateTime = startDateTimeMax;
                 break;
             default:
-                System.err.println(ERR_CALENDAR_NOT_FOUND);
+                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND);
                 break;
         }
         return dateTime.getTime().getTime();
@@ -283,7 +279,7 @@ public class Filter {
     }
 
     public void setLocationID(String name) {
-        locationID = Database.getInstance().getTheatre(name).getID();
+        locationID = Database.getTheatre(name).getID();
     }
 
     public int getLocationID() {
@@ -356,7 +352,7 @@ public class Filter {
                 clearStartTimeMax();
                 break;
             default:
-                System.err.println(ERR_FIELD_NOT_FOUND + fieldCode);
+                System.err.println(ErrorMessages.ERR_FILTER_FIELD_NOT_FOUND + fieldCode);
         }
     }
 
@@ -388,7 +384,7 @@ public class Filter {
                 getMinuteFrom(START_DT_MAX),
                 getCalendar(START_DT_MAX).getTime().getTime(),
                 locationID,
-                Database.getInstance().getTheatre(locationID)
+                Database.getTheatre(locationID)
         );
 
         return s;
@@ -397,9 +393,9 @@ public class Filter {
     private boolean checkTitle(Show show) {
         boolean match = true;
         if (title != null) {
-            String t1 = show.getTitle().toUpperCase();
-            String t2 = title.toUpperCase();
-            if (!t1.contains(t2)) {
+            String sShowTitle = show.getTitle().toUpperCase();
+            String sFilterTitle = title.toUpperCase();
+            if (!sShowTitle.contains(sFilterTitle)) {
                 match = false;
             }
         }
@@ -408,10 +404,10 @@ public class Filter {
 
     private boolean checkDate(Show show) {
         boolean match = true;
-        long filterDate = calendarConverter.getLongDate(startDateTimeMin);
-        long showDate = calendarConverter.getLongDate(show.getDate());
+        long lFilterDate = CalendarConverter.extractDateAsLong(startDateTimeMin);
+        long lShowDate = CalendarConverter.extractDateAsLong(show.getStartDateTimeAsCalendar());
 
-        if (showDate != filterDate) {
+        if (lShowDate != lFilterDate) {
             match = false;
         }
 
@@ -420,11 +416,11 @@ public class Filter {
 
     private boolean checkTime(Show show) {
         boolean match = true;
-        long filterTimeMin = calendarConverter.getLongTime(startDateTimeMin);
-        long filterTimeMax = calendarConverter.getLongTime(startDateTimeMax);
-        long showStartTime = calendarConverter.getLongTime(show.getStartDateTime());
+        long lFilterTimeMin = CalendarConverter.extractTimeAsLong(startDateTimeMin);
+        long lFilterTimeMax = CalendarConverter.extractTimeAsLong(startDateTimeMax);
+        long lShowStartTime = CalendarConverter.extractTimeAsLong(show.getStartDateTimeAsCalendar());
 
-        if ((showStartTime < filterTimeMin) || (showStartTime > filterTimeMax)) {
+        if ((lShowStartTime < lFilterTimeMin) || (lShowStartTime > lFilterTimeMax)) {
             match = false;
         }
 
@@ -440,25 +436,24 @@ public class Filter {
      */
     public ArrayList<Show> getShows() {
         System.out.println("#### Filter.getShows() ######################################");
+        Log.v("Filter.getShows()", "Filtering started.");
         ArrayList<Show> allShows;
         ArrayList<Show> filteredShows = new ArrayList<>();
-        Database database = Database.getInstance();
 
         /* Check if location ID is specified.
          * if true, search from the given location's list
          * if false, search from all shows
          */
         if (locationID != ANY_LOCATION) {
-            allShows = database.getShowsAt(locationID);
+            allShows = Database.getShowsAt(locationID);
         } else {
-            allShows = database.getShowsAt(ANY_LOCATION);
+            allShows = Database.getShowsAt(ANY_LOCATION);
         }
 
-        System.out.println(locationID);
-        System.out.println(allShows);
+        Log.v("Filter.getShows()", "Found " + allShows.size() + " shows for theatre " + locationID);
 
         // Check other search criteria
-        for (Show show : allShows) {
+        /*for (Show show : allShows) {
             boolean titleMatches = checkTitle(show);
             boolean dateMatches = checkDate(show);
             boolean timeMatches = checkTime(show);
@@ -466,7 +461,7 @@ public class Filter {
             if (titleMatches && dateMatches && timeMatches) {
                 filteredShows.add(show);
             }
-        }
+        }*/
 
         System.out.println("#############################################################");
         return filteredShows;

@@ -1,26 +1,24 @@
 package com.example.movieapp;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class Database {
     private static ArrayList<Theatre> theatres = null;
     private static ArrayList<Show> shows = null;
     private static Database instance = null;
-    private XMLReader xmlReader = XMLReader.getInstance();
 
-    public Database() {
-        System.out.println("#### Database.Database() ############################################");
+    private Database() {
+        Log.i("Database.Database", "Started creating a new database.");
         getTheatreInformation();
-        System.out.println("---------------------------------------------------------------------");
         getShowInformation();
 
         // Store all shows for future
         // these will be saved to a local database in the future (json, xml, or csv)
         shows = getTheatre("Valitse alue/teatteri").getShows();
-        System.out.println("#####################################################################");
+        Log.i("Database.Database","Finished creating a new database.");
     }
-
-    
     
     public static Database getInstance() {
         if (instance == null) {
@@ -29,51 +27,51 @@ public class Database {
         return instance;
     }
 
-    private void getTheatreInformation() {
+    private static void getTheatreInformation() {
         // Get theatres and IDs
         if (theatres == null) {
-            System.out.println("\t\tFetching theatre info...");
-            theatres = xmlReader.getTheatres();
+            Log.i("Database.getTheatreInformation","Started fetching theatres/areas.");
+            theatres = XMLReader.getOnlineTheatres();
         }
         for (Theatre t : theatres) {
             System.out.println("\t\t" + t.toString());
         }
+        Log.i("Database.getTheatreInformation","Finished fetching theatres/areas. Found " + theatres.size() + " theatres/areas.");
     }
 
-    private void getShowInformation() {
+    private static void getShowInformation() {
         // Get movies for each theater
-        for (Theatre t : theatres) {
-            int id = t.getID();
-            System.out.println("\t\tFetching shows for theatre " + id);
-            if (t.getShows().size() == 0) {
-                System.out.println("\t\tDownloading data...");
-                t.addShows(xmlReader.getShowsAt(id));
-                if (t.getShows() != null) {
-                    System.out.print("\t\tFound " + t.getShows().size() + " shows for theatre " + id);
+        for (Theatre theatre : theatres) {
+            int iTheatreID = theatre.getID();
+            Log.i("Database.getShowInformation","Started fetching shows for theatre " + iTheatreID + ".");
+            if (theatre.getShows().size() == 0) {
+                Log.i("Database.getShowInformation","Downloading data...");
+                theatre.addShows(XMLReader.getOnlineShowsAt(iTheatreID));
+                if (theatre.getShows() != null) {
+                    Log.i("Database.getShowInformation","Finished fetching shows for theatre " + iTheatreID + ". Found " + theatre.getShows().size() + " shows.");
                 }
             }
         }
     }
 
-    public ArrayList<Theatre> getTheatres() {
+    public static ArrayList<Theatre> getTheatres() {
         for (Theatre t : theatres) {
-            System.out.println("\t\t" + t.toString());
+            Log.d("Database.getTheatres",t.toString());
         }
+        Log.i("Database.getTheatres","Returned ArrayList, " + theatres.size() + " theatre(s).");
         return theatres;
     }
 
-    public ArrayList<Show> getAllShows() {
-        for (Show s : shows) {
-            System.out.println("\t\t" + s.toString());
+    public static ArrayList<Show> getShowsAt(int iTheatreID) {
+        ArrayList<Show> alShows = getTheatre(iTheatreID).getShows();
+        for (Show show : alShows) {
+            Log.d("Database.getShowsAt",show.toString());
         }
-        return shows;
+        Log.i("Database.getShowsAtTheatres","Returned ArrayList, " + alShows.size() + " show(s).");
+        return alShows;
     }
 
-    public ArrayList<Show> getShowsAt(int id) {
-        return getTheatre(id).getShows();
-    }
-
-    public Theatre getTheatre(int id) {
+    public static Theatre getTheatre(int id) {
         Theatre theatre = null;
         for (Theatre t : theatres) {
             if (t.getID() == id) {
@@ -83,7 +81,7 @@ public class Database {
         return theatre;
     }
 
-    public Theatre getTheatre(String name) {
+    public static Theatre getTheatre(String name) {
         Theatre theatre = null;
         for (Theatre t : theatres) {
             if (t.getName().equals(name)) {

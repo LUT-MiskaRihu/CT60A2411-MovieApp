@@ -1,5 +1,9 @@
 package com.example.movieapp;
 
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -14,43 +18,40 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 public class XMLReader {
-    private static XMLReader instance = null;
-    private int nrOfDays = 31;
-
-    public XMLReader() { }
-
-    public static XMLReader getInstance() {
-        if (instance == null) {
-            instance = new XMLReader();
-        }
-        return instance;
-    }
-
-    /**
-     * Takes XML url and tag name as parameters, returns NodeList of found elements.
-     * @param url XML url
-     * @param tagName XML tag name
-     * @return NodeList of found nodes
-     */
-    private NodeList getNodesByTagName(String url, String tagName) {
-        NodeList nodes = null;
+    private static Document parseOnlineXML(String url) {
+        Log.i("XMLReader.parseOnlineXML", "Started parsing online XML document.");
+        Document document = null;
         try {
-            DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            Document document = documentBuilder.parse(url);
-            document.getDocumentElement().normalize();
-            nodes = document.getElementsByTagName(tagName);
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            document = builder.parse(url);
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
-            System.err.println("ParserConfigurationException");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("IOException");
         } catch (SAXException e) {
             e.printStackTrace();
-            System.err.println("SAXException");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return nodes;
+        Log.i("XMLReader.parseOnlineXML", "Finished parsing online XML document");
+        return document;
+    }
+
+    private static NodeList getNodesByTag(@NonNull Document document, String tag) {
+        document.getDocumentElement().normalize();
+        return document.getElementsByTagName(tag);
+    }
+
+    @NonNull
+    private static ArrayList<Element> getElements(NodeList nodeList) {
+        ArrayList<Element> alElements = new ArrayList<>();
+        for (int i=0; i<nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE) {
+                Element element = (Element) node;
+                alElements.add(element);
+            }
+        }
+        return alElements;
     }
 
     /**
@@ -59,8 +60,9 @@ public class XMLReader {
      * @param tagName tag whose content we want to get
      * @return text content by tag name of the specified element
      */
-    private String getTextContent(Element e, String tagName) {
-        return e.getElementsByTagName(tagName).item(0).getTextContent().toString();
+    @NonNull
+    private static String getTextContent(@NonNull Element e, String tagName) {
+        return e.getElementsByTagName(tagName).item(0).getTextContent();
     }
 
     /**
@@ -68,22 +70,24 @@ public class XMLReader {
      * and converts the elements to Theatre objects.
      * @return ArrayList of found theatres (objects)
      */
-    public ArrayList<Theatre> getTheatres() {
-        String theatresURL = "https://www.finnkino.fi/xml/TheatreAreas";
-        String theatreTag = "TheatreArea";
-        ArrayList<Theatre> theatres = new ArrayList<Theatre>();
-        NodeList theatreNodes = getNodesByTagName(theatresURL, theatreTag);
+    @NonNull
+    public static ArrayList<Theatre> getOnlineTheatres() {
+        Log.v("XMLReader.getOnlineTheatres", "Started fetching information.");
+        String url = "https://www.finnkino.fi/xml/TheatreAreas";
+        String tag = "TheatreArea";
+        Document document = parseOnlineXML(url);
+        NodeList nodeList = getNodesByTag(document, tag);
+        ArrayList<Element> elements = getElements(nodeList);
+        ArrayList<Theatre> theatres = new ArrayList<>();
 
-        for (int i=0; i<theatreNodes.getLength(); i++) {
-            Node theatreNode = theatreNodes.item(i);
-            if (theatreNode.getNodeType() == Node.ELEMENT_NODE) {
-                Element theatreElement = (Element) theatreNode;
-                Theatre theatre = new Theatre();
-                theatre.setID(Integer.parseInt(getTextContent(theatreElement, "ID")));
-                theatre.setName(getTextContent(theatreElement, "Name"));
-                theatres.add(theatre);
-            }
+        for (Element element : elements) {
+            int id = Integer.parseInt(element.getElementsByTagName("ID").item(0).getTextContent());
+            String name = element.getElementsByTagName("Name").item(0).getTextContent();
+            Theatre theatre = new Theatre(id, name);
+            theatres.add(theatre);
         }
+
+        Log.v("XMLReader.getOnlineTheatres", "Found " + theatres.size() + " theatres.");
         return theatres;
     }
 
@@ -92,55 +96,61 @@ public class XMLReader {
      * and converts the elements to Show objects.
      * @return ArrayList of found shows (objects)
      */
-    public ArrayList<Show> getShowsAt(int area) {
-        System.out.println("#### XMLReader.getShowsAt(int id) ###################################");
-        final String DELIMIT = "&";
-        StringBuilder url = new StringBuilder("https://www.finnkino.fi/xml/Schedule/?");
-        url.append("nrOfDays=" + nrOfDays); // set maximum number of days to display
-        url.append(DELIMIT + "area=" + area);
+    @NonNull
+    public static ArrayList<Show> getOnlineShowsAt(int iTheatreID) {
+        Log.i("XMLReader.getOnlineShowsAt", "Started fetching information for theatre " + iTheatreID + ".");
+        String url = "https://www.finnkino.fi/xml/Schedule/?nrOfDays=31&area=" + iTheatreID;
+        String tag = "Show";
+        Document document = parseOnlineXML(url);
+        NodeList nodeList = getNodesByTag(document, tag);
+        ArrayList<Element> elements = getElements(nodeList);
+        ArrayList<Show> shows = new ArrayList<>();
 
-        ArrayList<Show> shows = new ArrayList<Show>();
-        NodeList showNodes = getNodesByTagName(url.toString(), "Show");
+        for (Element element : elements) {
+            // Movie Attributes
+            String sTitle = getTextContent(element, "Title");
+            String sOriginalTitle = getTextContent(element, "OriginalTitle");
+            String sLength = getTextContent(element, "LengthInMinutes");
+            String sProductionYear = getTextContent(element, "ProductionYear");
+            String sLocalRelease = getTextContent(element, "dtLocalRelease");
+            String sRating = getTextContent(element, "Rating");
+            String sGenres = getTextContent(element, "Genres");
+            //String sSpokenLanguage = ((Element) element.getChildNodes().item(0)).getTextContent();
 
-        for (int i=0; i<showNodes.getLength(); i++) {
-            Node showNode = showNodes.item(i);
-            if (showNode.getNodeType() == Element.ELEMENT_NODE) {
-                Element showElement = (Element) showNode;
-                Show show = new Show();
-                show.setID(
-                        getTextContent(showElement, "ID"));
-                show.setStartDateTime(
-                        Parser.parseDateTime(getTextContent(showElement, "dttmShowStart")));
-                show.setEndDateTime(
-                        Parser.parseDateTime(getTextContent(showElement, "dttmShowEnd")));
-                show.setEventID(
-                        getTextContent(showElement, "EventID"));
-                show.setTitle(
-                        getTextContent(showElement, "Title"));
-                show.setOriginalTitle(
-                        getTextContent(showElement, "OriginalTitle"));
-                show.setProductionYear(
-                        getTextContent(showElement, "ProductionYear"));
-                show.setLength(
-                        getTextContent(showElement, "LengthInMinutes"));
-                show.setLocalReleaseDateTime(
-                        Parser.parseDateTime(getTextContent(showElement, "dtLocalRelease")));
-                show.setRating(
-                        getTextContent(showElement, "Rating"));
-                show.setEventType(
-                        getTextContent(showElement, "EventType"));
-                show.setGenres(
-                        getTextContent(showElement, "Genres"));
-                show.setLocationID(
-                        getTextContent(showElement, "TheatreID"));
-                show.setLocationName(
-                        getTextContent(showElement, "TheatreAndAuditorium"));
-                show.setPresentationMethodAndLanguage(
-                        getTextContent(showElement, "PresentationMethodAndLanguage"));
-                shows.add(show);
-            }
+            // Show Attributes
+            String sShowID = getTextContent(element, "ID");
+            String sEventID = getTextContent(element, "EventID");
+            String sStartDateTime = getTextContent(element, "dttmShowStart");
+            String sEndDateTime = getTextContent(element, "dttmShowEnd");
+            String sTheatreID = Integer.toString(iTheatreID);
+            String sAuditoriumName = getTextContent(element, "TheatreAuditorium");
+            String sPresentationMethod = getTextContent(element, "PresentationMethod");
+
+            Show show = new Show();
+
+            // Set Movie Attributes
+            show.setTitle(sTitle);
+            show.setOriginalTitle(sOriginalTitle);
+            show.setLength(sLength);
+            show.setProductionYear(sProductionYear);
+            show.setLocalReleaseDateTime(sLocalRelease);
+            show.setRating(sRating);
+            show.setGenres(sGenres);
+
+            // Set Show Attributes
+            show.setShowID(sShowID);
+            show.setEventID(sEventID);
+            show.setStartDateTime(sStartDateTime);
+            show.setEndDateTime(sEndDateTime);
+            show.setTheatreID(sTheatreID);
+            show.setAuditoriumName(sAuditoriumName);
+            show.setPresentationMethod(sPresentationMethod);
+
+            // Add show to ArrayList
+            shows.add(show);
         }
-        System.out.println("#####################################################################");
+
+        Log.i("XMLReader.getOnlineShowsAt", "Found " + shows.size() + " shows for theatre " + iTheatreID + ".");
         return shows;
     }
 }
