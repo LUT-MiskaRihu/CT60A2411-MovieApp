@@ -8,55 +8,161 @@ import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 public class Filter {
+    private static final String sClassTag = "Filter";
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Other Codes
+
+    public static final int NOT_SET = -1;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     // Location Codes
+
     private static final int ANY_LOCATION = 1029; // 1029 refers to theater name "Valitse alue/teatteri" aka all possible locations.
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     // Calendar Codes
+
     public static final int START_DT_MIN = 0;     // represents startDateTimeMin
     public static final int START_DT_MAX = 1;     // represents startDateTimeMax
     public static final int START_DT_BOTH = 2;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     // Field Codes
+
     public static final int FIELD_TITLE = 0;
     public static final int FIELD_DATE = 1;
     public static final int FIELD_TIME_MIN = 2;
     public static final int FIELD_TIME_MAX = 3;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////
     // Attributes
-    private static Calendar startDateTimeMin;   // Stores minimum start time; year, month, day, hour, and minute
-    private static Calendar startDateTimeMax;   // Stores maximum start time; year, month, day, hour, and minute
-    private static String title;
-    private static int locationID;                // stores the location id of a theater
+
+    private int iTheatreID;      // stores the location id of a theater
+    private String sTitle;
+
+    private long lMinStartDate;
+    private long lMinStartTime;
+    private long lMaxStartTime;
+
+    private Calendar calMinStartDate; // Stores minimum start date (day, month, year)
+    private Calendar calMinStartTime; // Stores minimum start time (hour and minute)
+    private Calendar calMaxStartTime; // Stores maximum start time (hour and minute)
 
     private static Filter instance = null;
 
-    // Constructors
-    private Filter() { }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Constructor and getInstance
 
-    /**
-     * Gets the instance of the Filter class.
-     * @return instance; if instance doesn't exist, create one first
-     */
+    private Filter() {
+        iTheatreID = NOT_SET;
+        sTitle = null;
+        lMinStartDate = NOT_SET;
+        lMinStartTime = NOT_SET;
+        lMaxStartTime = NOT_SET;
+    }
+
     public static Filter getInstance() {
         if (instance == null) {
             instance = new Filter();
-            clearFilter();
         }
         return instance;
     }
 
-    public static void clearFilter() {
-        locationID = ANY_LOCATION;
-        clearTitle();
-        startDateTimeMin = Calendar.getInstance();
-        clearStartDateMin();
-        clearStartTimeMin();
-        startDateTimeMax = Calendar.getInstance();
-        clearStartDateMax();
-        clearStartTimeMax();
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Setters, Getters and Clear Functions
+
+    // Theatre ID
+    public void setTheatre(int iTheatreID) {
+        instance.iTheatreID = iTheatreID;
     }
+
+    public void setTheatre(String sTheatreName) {
+        instance.iTheatreID = Database.getTheatre(sTheatreName).getID();
+    }
+
+    public int getTheatreID() {
+        return instance.iTheatreID;
+    }
+
+    public void clearTheatreID() {
+        instance.iTheatreID = NOT_SET;
+    }
+
+    // Title
+    public void setTitle(String sTitle) {
+        instance.sTitle = sTitle;
+    }
+
+    public String getTitle() {
+        return instance.sTitle;
+    }
+
+    public void clearTitle() {
+        instance.sTitle = null;
+    }
+
+    // Date
+    public void setMinStartDate(long lMinStartDate) {
+        instance.lMinStartDate = lMinStartDate;
+    }
+
+    public void setMinStartDate(@NonNull Date dateMinStartDate) {
+        instance.lMinStartDate = dateMinStartDate.getTime();
+    }
+
+    public void setMinStartDate(String sMinStartDate) {
+        setMinStartDate(Parser.parseDate(sMinStartDate));
+    }
+
+    public long getMinStartDate() {
+        return instance.lMinStartDate;
+    }
+
+    public void clearMinStartDate() { instance.lMinStartDate = NOT_SET; }
+
+    // Min Time
+    public void setMinStartTime(long lMinStartTime) {
+        instance.lMinStartTime = lMinStartTime;
+    }
+
+    public void setMinStartTime(@NonNull Date dateMinStartTime) {
+        instance.lMinStartTime = dateMinStartTime.getTime();
+    }
+
+    public void setMinStartTime(String sMinStartTime) {
+        setMinStartTime(Parser.parseTime(sMinStartTime));
+    }
+
+    public long getMinStartTime() {
+        return instance.lMinStartTime;
+    }
+
+    public void clearMinStartTime() { instance.lMaxStartTime = NOT_SET; }
+
+    // Max Time
+    public void setMaxStartTime(long lMaxStartTime) {
+        instance.lMaxStartTime = lMaxStartTime;
+    }
+
+    public void setMaxStartTime(@NonNull Date dateMaxStartTime) {
+        instance.lMaxStartTime = dateMaxStartTime.getTime();
+    }
+
+    public void setMaxStartTime(String sMaxStartTime) {
+        setMaxStartTime(Parser.parseTime(sMaxStartTime));
+    }
+
+    public long getMaxStartTime() {
+        return instance.lMaxStartTime;
+    }
+
+    public void clearMaxStartTime() { instance.lMaxStartTime = NOT_SET; }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
      * Sets the date for the chosen calendar.
@@ -65,6 +171,7 @@ public class Filter {
      * @param month new month {int from 0 to 11 inclusive}
      * @param day new day of month
      */
+    @Deprecated
     private void setDate(@NonNull Calendar calendar, int year, int month, int day) {
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, month);
@@ -77,75 +184,86 @@ public class Filter {
      * @param hour
      * @param minute
      */
+    @Deprecated
     private void setTimeFor(@NonNull Calendar calendar, int hour, int minute) {
         calendar.set(Calendar.HOUR_OF_DAY, hour);
         calendar.set(Calendar.MINUTE, minute);
     }
 
     /**
-     * Public method that allows setting the date for the calendar specified by calendar code.
-     * @param calendar which calendar to modify, {CALENDAR_START_MIN | CALENDAR_START_MAX | CALENDAR_START_BOTH}
+     * Public method that allows setting the date for the iCalendarCode specified by iCalendarCode code.
+     * @param iCalendarCode which iCalendarCode to modify, {CALENDAR_START_MIN | CALENDAR_START_MAX | CALENDAR_START_BOTH}
      * @param year new value for year {int}
      * @param month new value for month {int from 0 to 11 inclusive}
      * @param day new value for day of month {int from 1 to 31 inclusive}
      */
-    public void setDateFor(int calendar, int year, int month, int day) {
-        switch (calendar) {
+    @Deprecated
+    public void setDateFor(int iCalendarCode, int year, int month, int day) {
+        String sMethodTag = "setDateFor";
+        
+        switch (iCalendarCode) {
             case (START_DT_MIN):
-                setDate(startDateTimeMin, year, month, day);
+                setDate(calMinStartTime, year, month, day);
                 break;
             case (START_DT_MAX):
-                setDate(startDateTimeMax, year, month, day);
+                setDate(calMaxStartTime, year, month, day);
                 break;
             case (START_DT_BOTH):
-                setDate(startDateTimeMin, year, month, day);
-                setDate(startDateTimeMax, year, month, day);
+                setDate(calMinStartTime, year, month, day);
+                setDate(calMaxStartTime, year, month, day);
                 break;
             default:
-                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendar);
+                Log.e(sClassTag + sMethodTag, ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + iCalendarCode);
                 break;
         }
     }
 
     /**
-     * Public method that allows setting the time for the calendar specified by calendar code.
-     * @param calendar which calendar to modify, {CALENDAR_START_MIN | CALENDAR_START_MAX | CALENDAR_START_BOTH}
+     * Public method that allows setting the time for the iCalendarCode specified by iCalendarCode code.
+     * @param iCalendarCode which iCalendarCode to modify, {CALENDAR_START_MIN | CALENDAR_START_MAX | CALENDAR_START_BOTH}
      * @param hour new value for hour {int from 0 to 23 inclusive}
      * @param minute new value for minute {int from 0 to 59 inclusive}
      */
-    public void setTimeFor(int calendar, int hour, int minute) {
-        switch (calendar) {
+    @Deprecated
+    public void setTimeFor(int iCalendarCode, int hour, int minute) {
+        String sMethodTag = "setTimeFor";
+        
+        switch (iCalendarCode) {
             case (START_DT_MIN):
-                setTimeFor(startDateTimeMin, hour, minute);
+                setTimeFor(calMinStartTime, hour, minute);
                 break;
             case (START_DT_MAX):
-                setTimeFor(startDateTimeMax, hour, minute);
+                setTimeFor(calMaxStartTime, hour, minute);
                 break;
             default:
-                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendar);
+                Log.e(sClassTag + sMethodTag, ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + iCalendarCode);
                 break;
         }
     }
 
-    @Discouraged(message = "Use methods 'getYearFrom(int calendarCode)' etc.")
+    @Discouraged(message = "Use methods 'getYearFrom(int iCalendarCodeCode)' etc.")
     /**
-     * Returns the specified calendar. 
-     * @param calendar which calendar to return, {CALENDAR_START_MIN | CALENDAR_START_MAX}
-     * @return specified calendar, {dateTimeMin if calendar == CALENDAR_START_MIN | dateTimeMax if calendar == CALENDAR_START_MAX | null if calendar is something else}
+     * Returns the specified iCalendarCode.
+     * @param iCalendarCode which iCalendarCode to return, {CALENDAR_START_MIN | CALENDAR_START_MAX}
+     * @return specified iCalendarCode, {dateTimeMin if iCalendarCode == CALENDAR_START_MIN | dateTimeMax if iCalendarCode == CALENDAR_START_MAX | null if iCalendarCode is something else}
      */
-    public Calendar getCalendar(int calendar) {
+    @Deprecated
+    public Calendar getCalendar(int iCalendarCode) {
+        String sMethodTag = "getCalendar";
         Calendar outputCalendar = null;
-        switch (calendar) {
+        
+        switch (iCalendarCode) {
             case (START_DT_MIN):
-                outputCalendar = startDateTimeMin;
+                outputCalendar = calMinStartTime;
                 break;
             case (START_DT_MAX):
-                outputCalendar = startDateTimeMax;
+                outputCalendar = calMaxStartTime;
                 break;
             default:
-                System.err.println(ErrorMessages.ERR_FILTER_FIELD_NOT_FOUND + calendar);
+                Log.e(sClassTag + sMethodTag, ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + iCalendarCode);
                 break;
         }
+
         return outputCalendar;
     }
 
@@ -153,19 +271,23 @@ public class Filter {
      * Public method for getting the YEAR field of a calendar specified by the calendar code.
      * @return year when valid calendar code is give, otherwise return -1 to indicate an error.
      */
-    public int getYearFrom(int calendarCode) {
+    @Deprecated
+    public int getYearFrom(int iCalendarCode) {
+        String sMethodTag = "getYearFrom";
         int year = -1;
-        switch (calendarCode) {
+        
+        switch (iCalendarCode) {
             case (START_DT_MIN):
-                year = startDateTimeMin.get(Calendar.YEAR);
+                year = calMinStartTime.get(Calendar.YEAR);
                 break;
             case (START_DT_MAX):
-                year = startDateTimeMax.get(Calendar.YEAR);
+                year = calMaxStartTime.get(Calendar.YEAR);
                 break;
             default:
-                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendarCode);
+                Log.e(sClassTag + sMethodTag, ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + iCalendarCode);
                 break;
         }
+
         return year;
     }
 
@@ -173,19 +295,23 @@ public class Filter {
      * Public method for getting the MONTH field of a calendar specified by the calendar code.
      * @return month when valid calendar code is give, otherwise return -1 to indicate an error.
      */
-    public int getMonthFrom(int calendarCode) {
+    @Deprecated
+    public int getMonthFrom(int iCalendarCode) {
+        String sMethodTag = "getMonthFrom";
         int month = -1;
-        switch (calendarCode) {
+
+        switch (iCalendarCode) {
             case (START_DT_MIN):
-                month = startDateTimeMin.get(Calendar.MONTH) + 1;
+                month = calMinStartTime.get(Calendar.MONTH) + 1;
                 break;
             case (START_DT_MAX):
-                month = startDateTimeMax.get(Calendar.MONTH) + 1;
+                month = calMaxStartTime.get(Calendar.MONTH) + 1;
                 break;
             default:
-                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendarCode);
+                Log.e(sClassTag + sMethodTag, ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + iCalendarCode);
                 break;
         }
+
         return month;
     }
 
@@ -193,19 +319,23 @@ public class Filter {
      * Public method for getting the DAY OF MONTH field of a calendar specified by the calendar code.
      * @return day when valid calendar code is give, otherwise return -1 to indicate an error.
      */
-    public int getDayFrom(int calendarCode) {
+    @Deprecated
+    public int getDayFrom(int iCalendarCode) {
+        String sMethodTag = "getDayFrom";
         int day = -1;
-        switch (calendarCode) {
+
+        switch (iCalendarCode) {
             case (START_DT_MIN):
-                day = startDateTimeMin.get(Calendar.DAY_OF_MONTH);
+                day = calMinStartTime.get(Calendar.DAY_OF_MONTH);
                 break;
             case (START_DT_MAX):
-                day = startDateTimeMax.get(Calendar.DAY_OF_MONTH);
+                day = calMaxStartTime.get(Calendar.DAY_OF_MONTH);
                 break;
             default:
-                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendarCode);
+                Log.e(sClassTag + sMethodTag, ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + iCalendarCode);
                 break;
         }
+
         return day;
     }
 
@@ -213,19 +343,23 @@ public class Filter {
      * Public method for getting the HOUR OF DAY field of a calendar specified by the calendar code.
      * @return hour when valid calendar code is give, otherwise return -1 to indicate an error.
      */
-    public int getHourFrom(int calendarCode) {
+    @Deprecated
+    public int getHourFrom(int iCalendarCode) {
+        String sMethodTag = "getHourFrom";
         int hour = -1;
-        switch (calendarCode) {
+
+        switch (iCalendarCode) {
             case (START_DT_MIN):
-                hour = startDateTimeMin.get(Calendar.HOUR_OF_DAY);
+                hour = calMinStartTime.get(Calendar.HOUR_OF_DAY);
                 break;
             case (START_DT_MAX):
-                hour = startDateTimeMax.get(Calendar.HOUR_OF_DAY);
+                hour = calMaxStartTime.get(Calendar.HOUR_OF_DAY);
                 break;
             default:
-                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendarCode);
+                Log.e(sClassTag + sMethodTag, ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + iCalendarCode);
                 break;
         }
+
         return hour;
     }
 
@@ -233,35 +367,40 @@ public class Filter {
      * Public method for getting the MINUTE field of a calendar specified by the calendar code.
      * @return minute when valid calendar code is give, otherwise return -1 to indicate an error.
      */
-    public int getMinuteFrom(int calendarCode) {
+    @Deprecated
+    public int getMinuteFrom(int iCalendarCode) {
+        String sMethodTag = "getMinuteFrom";
         int minute = -1;
-        switch (calendarCode) {
+
+        switch (iCalendarCode) {
             case (START_DT_MIN):
-                minute = startDateTimeMin.get(Calendar.MINUTE);
+                minute = calMinStartTime.get(Calendar.MINUTE);
                 break;
             case (START_DT_MAX):
-                minute = startDateTimeMax.get(Calendar.MINUTE);
+                minute = calMaxStartTime.get(Calendar.MINUTE);
                 break;
             default:
-                System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + calendarCode);
+                Log.e(sClassTag + sMethodTag, ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND + iCalendarCode);
                 break;
         }
+
         return minute;
     }
 
     /**
      * Converts Calendar object's date & time information to a long integer.
-     * @param calendar calendar code
+     * @param iCalendarCode calendar code
      * @return calendar date & time info as long
      */
-    private long getTime(int calendar) {
+    @Deprecated
+    private long getTime(int iCalendarCode) {
         Calendar dateTime = Calendar.getInstance();
-        switch (calendar) {
+        switch (iCalendarCode) {
             case (START_DT_MIN):
-                dateTime = startDateTimeMin;
+                dateTime = calMinStartTime;
                 break;
             case (START_DT_MAX):
-                dateTime = startDateTimeMax;
+                dateTime = calMaxStartTime;
                 break;
             default:
                 System.err.println(ErrorMessages.ERR_FILTER_CALENDAR_NOT_FOUND);
@@ -270,131 +409,111 @@ public class Filter {
         return dateTime.getTime().getTime();
     }
 
-    public void setTitle(String title) {
-        Filter.title = title;
+    @Deprecated
+    public void setLocationID(String sTheatreName) {
+        iTheatreID = Database.getTheatre(sTheatreName).getID();
     }
 
-    public void setLocationID(int id) {
-        locationID = id;
-    }
-
-    public void setLocationID(String name) {
-        locationID = Database.getTheatre(name).getID();
-    }
-
-    public int getLocationID() {
-        return locationID;
-    }
-
-    /**
-     * Resets the title field.
-     */
-    private static void clearTitle() {
-        title = null;
-    }
-
-    /**
-     * Resets the date of starDateTimeMin to current date.
-     */
-    private static  void clearStartDateMin() {
-        startDateTimeMin.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
-        startDateTimeMin.set(Calendar.MONTH, Calendar.getInstance().get(Calendar.MONTH));
-        startDateTimeMin.set(Calendar.DAY_OF_MONTH, Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
-    }
-
-    /**
-     * Resets the date of startDateTimeMax to the maximum value, i.e., 31.12.3000
-     * 3000 is just an arbitrarily large number. I chose 3000 because I don't think anyone will
-     * be using this app in the year 3000 anymore :D
-     */
-    private static void clearStartDateMax() {
-        startDateTimeMax.set(Calendar.YEAR, 3000);
-        startDateTimeMax.set(Calendar.MONTH, 11);
-        startDateTimeMax.set(Calendar.DAY_OF_MONTH, 31);
-    }
-
-    /**
-     * Resets the date of starDateTimeMin to current time.
-     */
-    public static void clearStartTimeMin() {
-        startDateTimeMin.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
-        startDateTimeMin.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
-        startDateTimeMin.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
-    }
-
-    /**
-     * Resets the time of startDateTimeMax to the maximum value, i.e., 23:59:59
-     */
-    public static void clearStartTimeMax() {
-        startDateTimeMax.set(Calendar.HOUR_OF_DAY, 23);
-        startDateTimeMax.set(Calendar.MINUTE, 59);
-        startDateTimeMax.set(Calendar.SECOND, 59);
-    }
-
-    /**
-     * Clears or resets the field specified by field code
-     * (aka resets the attribute value from the filter).
-     * @param fieldCode
-     */
-    public void clearField(int fieldCode) {
-        switch (fieldCode) {
-            case (FIELD_TITLE):
-                clearTitle();
-                break;
-            case (FIELD_DATE):
-                clearStartDateMin();
-                clearStartDateMax();
-                break;
-            case (FIELD_TIME_MIN):
-                clearStartTimeMin();
-                break;
-            case (FIELD_TIME_MAX):
-                clearStartTimeMax();
-                break;
-            default:
-                System.err.println(ErrorMessages.ERR_FILTER_FIELD_NOT_FOUND + fieldCode);
-        }
-    }
+//    /**
+//     * Resets the date of starDateTimeMin to current date.
+//     */
+//    @Deprecated
+//    private static  void clearStartDateMin() {
+//        calMinStartTime.set(Calendar.YEAR, Calendar.getInstance().get(Calendar.YEAR));
+//        calMinStartTime.set(Calendar.MONTH, Calendar.getInstance().get(Calendar.MONTH));
+//        calMinStartTime.set(Calendar.DAY_OF_MONTH, Calendar.getInstance().get(Calendar.DAY_OF_MONTH));
+//    }
+//
+//    /**
+//     * Resets the date of startDateTimeMax to the maximum value, i.e., 31.12.3000
+//     * 3000 is just an arbitrarily large number. I chose 3000 because I don't think anyone will
+//     * be using this app in the year 3000 anymore :D
+//     */
+//    @Deprecated
+//    private static void clearStartDateMax() {
+//        calMaxStartTime.set(Calendar.YEAR, 3000);
+//        calMaxStartTime.set(Calendar.MONTH, 11);
+//        calMaxStartTime.set(Calendar.DAY_OF_MONTH, 31);
+//    }
+//
+//    /**
+//     * Resets the date of starDateTimeMin to current time.
+//     */
+//    @Deprecated
+//    public static void clearStartTimeMin() {
+//        calMinStartTime.set(Calendar.HOUR_OF_DAY, Calendar.getInstance().get(Calendar.HOUR_OF_DAY));
+//        calMinStartTime.set(Calendar.MINUTE, Calendar.getInstance().get(Calendar.MINUTE));
+//        calMinStartTime.set(Calendar.SECOND, Calendar.getInstance().get(Calendar.SECOND));
+//    }
+//
+//    /**
+//     * Resets the time of startDateTimeMax to the maximum value, i.e., 23:59:59
+//     */
+//    @Deprecated
+//    public static void clearStartTimeMax() {
+//        calMaxStartTime.set(Calendar.HOUR_OF_DAY, 23);
+//        calMaxStartTime.set(Calendar.MINUTE, 59);
+//        calMaxStartTime.set(Calendar.SECOND, 59);
+//    }
+//
+//    /**
+//     * Clears or resets the field specified by field code
+//     * (aka resets the attribute value from the filter).
+//     * @param fieldCode
+//     */
+//    @Deprecated
+//    public void clearField(int fieldCode) {
+//        switch (fieldCode) {
+//            case (FIELD_TITLE):
+//                clearTitle();
+//                break;
+//            case (FIELD_DATE):
+//                clearStartDateMin();
+//                clearStartDateMax();
+//                break;
+//            case (FIELD_TIME_MIN):
+//                clearStartTimeMin();
+//                break;
+//            case (FIELD_TIME_MAX):
+//                clearStartTimeMax();
+//                break;
+//            default:
+//                System.err.println(ErrorMessages.ERR_FILTER_FIELD_NOT_FOUND + fieldCode);
+//        }
+//    }
 
     @NonNull
     @SuppressLint({"DefaultLocale", "DiscouragedApi"})
     @Override
     public String toString() {
         String s;
-        s = "#### Filter.toString() ######################################\n"
-                + "\t\tTitle: '%s'\n"
-                + "\t\tMinimum Start Time: '%02d.%02d.%04d %02d:%02d' or %d\n"
-                + "\t\tMaximum Start Time: '%02d.%02d.%04d %02d:%02d' or %d\n"
-                + "\t\tLocation: %04d or '%s'\n"
-                + "#############################################################";
+        s = "#### Filter.toString() ######################################\n" +
+            "\t\tTheatre: %04d or '%s'\n" +
+            "\t\tTitle: '%s'\n" +
+            "\t\tMinimum Start Date: '%s' or %d\n" +
+            "\t\tMinimum Start Time: '%s' or %d\n" +
+            "\t\tMaximum Start Time: '%s' or %d\n" +
+            "#############################################################";
 
-        s = String.format(
+        return String.format(
                 s,
-                title,
-                getDayFrom(START_DT_MIN),
-                getMonthFrom(START_DT_MIN),
-                getYearFrom(START_DT_MIN),
-                getHourFrom(START_DT_MIN),
-                getMinuteFrom(START_DT_MIN),
-                getCalendar(START_DT_MIN).getTime().getTime(),
-                getDayFrom(START_DT_MAX),
-                getMonthFrom(START_DT_MAX),
-                getYearFrom(START_DT_MAX),
-                getHourFrom(START_DT_MAX),
-                getMinuteFrom(START_DT_MAX),
-                getCalendar(START_DT_MAX).getTime().getTime(),
-                locationID,
-                Database.getTheatre(locationID)
+                instance.iTheatreID,
+                Database.getTheatre(instance.iTheatreID).getName(),
+                instance.sTitle,
+                new Date(instance.lMinStartDate),
+                new Date(instance.lMinStartDate).getTime(),
+                new Date(instance.lMinStartTime),
+                new Date(instance.lMinStartTime).getTime(),
+                new Date(instance.lMaxStartTime),
+                new Date(instance.lMaxStartTime).getTime()
         );
-
-        return s;
     }
 
     private boolean checkTitle(Show show) {
         boolean match = true;
-        if (title != null) {
+        if (sTitle != null) {
             String sShowTitle = show.getTitle().toUpperCase();
-            String sFilterTitle = title.toUpperCase();
+            String sFilterTitle = sTitle.toUpperCase();
             if (!sShowTitle.contains(sFilterTitle)) {
                 match = false;
             }
@@ -404,8 +523,15 @@ public class Filter {
 
     private boolean checkDate(Show show) {
         boolean match = true;
-        long lFilterDate = CalendarConverter.extractDateAsLong(startDateTimeMin);
+
+        // Check if filter's date field is set.
+
+
+        long lCurrentDate = CalendarConverter.extractDateAsLong(Calendar.getInstance());
+        long lFilterDate = CalendarConverter.extractDateAsLong(calMinStartTime);
         long lShowDate = CalendarConverter.extractDateAsLong(show.getStartDateTimeAsCalendar());
+
+        // Check if date field is set
 
         if (lShowDate != lFilterDate) {
             match = false;
@@ -416,8 +542,8 @@ public class Filter {
 
     private boolean checkTime(Show show) {
         boolean match = true;
-        long lFilterTimeMin = CalendarConverter.extractTimeAsLong(startDateTimeMin);
-        long lFilterTimeMax = CalendarConverter.extractTimeAsLong(startDateTimeMax);
+        long lFilterTimeMin = CalendarConverter.extractTimeAsLong(calMinStartTime);
+        long lFilterTimeMax = CalendarConverter.extractTimeAsLong(calMaxStartTime);
         long lShowStartTime = CalendarConverter.extractTimeAsLong(show.getStartDateTimeAsCalendar());
 
         if ((lShowStartTime < lFilterTimeMin) || (lShowStartTime > lFilterTimeMax)) {
@@ -443,32 +569,32 @@ public class Filter {
          * if true, search from the given location's list
          * if false, search from all shows
          */
-        if (locationID != ANY_LOCATION) {
-            allShows = Database.getShowsAt(locationID);
+        if (iTheatreID != ANY_LOCATION) {
+            allShows = Database.getShowsAt(iTheatreID);
         } else {
             allShows = Database.getShowsAt(ANY_LOCATION);
         }
 
-        Log.i("Filter.getShows", "Found " + allShows.size() + " shows for theatre " + locationID);
+        Log.i("Filter.getShows", "Found " + allShows.size() + " shows for theatre " + iTheatreID);
         Log.i("Filter.getShows", "Starting comparing shows to search criteria.");
         Log.d("Filter.getShows", "Show ID; titleMatches; dateMatches; timeMatches");
 
         // Check other search criteria
-        for (Show show : allShows) {
-            boolean titleMatches = checkTitle(show);
-            boolean dateMatches = checkDate(show);
-            boolean timeMatches = checkTime(show);
-            Log.d("Filter.getShows", show.getShowID() + ";" + titleMatches + ";" + dateMatches + ";" + timeMatches);
-
-            if (titleMatches && dateMatches && timeMatches) {
-                filteredShows.add(show);
-                Log.d("Filter.getShows", "Added show " + show.getShowID() + " to matching shows.");
-            }
-        }
+//        for (Show show : allShows) {
+//            boolean titleMatches = checkTitle(show);
+//            boolean dateMatches = checkDate(show);
+//            boolean timeMatches = checkTime(show);
+//            Log.d("Filter.getShows", show.getShowID() + ";" + titleMatches + ";" + dateMatches + ";" + timeMatches);
+//
+//            if (titleMatches && dateMatches && timeMatches) {
+//                filteredShows.add(show);
+//                Log.d("Filter.getShows", "Added show " + show.getShowID() + " to matching shows.");
+//            }
+//        }
 
         Log.i("Filter.getShows", "Filtration process finished.");
         Log.i("Filter.getShows",filteredShows.size() + "/" + allShows.size() + " shows match the search criteria.");
-        return filteredShows;
+        return allShows;
     }
 }
 
