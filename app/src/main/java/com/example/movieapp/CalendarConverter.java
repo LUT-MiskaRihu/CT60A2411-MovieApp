@@ -16,7 +16,7 @@ public class CalendarConverter {
         return instance;
     }
 
-    private static Date getEmptyDate() {
+    public static Date getEmptyDate() {
         return new Date(0);
     }
 
