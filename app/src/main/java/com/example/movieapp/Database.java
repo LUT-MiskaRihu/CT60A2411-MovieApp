@@ -64,9 +64,11 @@ public class Database {
 
     public static ArrayList<Show> getShowsAt(int iTheatreID) {
         ArrayList<Show> alShows = getTheatre(iTheatreID).getShows();
+
         for (Show show : alShows) {
             Log.d("Database.getShowsAt",show.toString());
         }
+
         Log.i("Database.getShowsAtTheatres","Returned ArrayList, " + alShows.size() + " show(s).");
         return alShows;
     }

@@ -435,8 +435,7 @@ public class Filter {
      * @return ArrayList containing shows (objects) that match all search criteria
      */
     public ArrayList<Show> getShows() {
-        System.out.println("#### Filter.getShows() ######################################");
-        Log.v("Filter.getShows()", "Filtering started.");
+        Log.i("Filter.getShows", "Started filtration process.");
         ArrayList<Show> allShows;
         ArrayList<Show> filteredShows = new ArrayList<>();
 
@@ -450,20 +449,25 @@ public class Filter {
             allShows = Database.getShowsAt(ANY_LOCATION);
         }
 
-        Log.v("Filter.getShows()", "Found " + allShows.size() + " shows for theatre " + locationID);
+        Log.i("Filter.getShows", "Found " + allShows.size() + " shows for theatre " + locationID);
+        Log.i("Filter.getShows", "Starting comparing shows to search criteria.");
+        Log.d("Filter.getShows", "Show ID; titleMatches; dateMatches; timeMatches");
 
         // Check other search criteria
-        /*for (Show show : allShows) {
+        for (Show show : allShows) {
             boolean titleMatches = checkTitle(show);
             boolean dateMatches = checkDate(show);
             boolean timeMatches = checkTime(show);
+            Log.d("Filter.getShows", show.getShowID() + ";" + titleMatches + ";" + dateMatches + ";" + timeMatches);
 
             if (titleMatches && dateMatches && timeMatches) {
                 filteredShows.add(show);
+                Log.d("Filter.getShows", "Added show " + show.getShowID() + " to matching shows.");
             }
-        }*/
+        }
 
-        System.out.println("#############################################################");
+        Log.i("Filter.getShows", "Filtration process finished.");
+        Log.i("Filter.getShows",filteredShows.size() + "/" + allShows.size() + " shows match the search criteria.");
         return filteredShows;
     }
 }
