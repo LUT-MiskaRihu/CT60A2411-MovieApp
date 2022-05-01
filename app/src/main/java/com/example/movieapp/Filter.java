@@ -4,11 +4,16 @@ import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import android.util.Log;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 public class Filter {
     private static final String sClassTag = "Filter";
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Location Codes
+
+    private static final int ANY_LOCATION = 1029; // 1029 refers to theater name "Valitse alue/teatteri" aka all possible locations.
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Other Codes
@@ -16,14 +21,9 @@ public class Filter {
     public static final int NOT_SET = -1;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
-    // Location Codes
-
-    private static final int ANY_LOCATION = 1029; // 1029 refers to theater name "Valitse alue/teatteri" aka all possible locations.
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////
     // Attributes
 
-    private int iTheatreID;      // stores the location id of a theater
+    private int iTheatreID;
     private String sTitle;
 
     private long lStartDateMin;
@@ -198,7 +198,7 @@ public class Filter {
         return match;
     }
 
-    private boolean checkDateTime(@NonNull Show show, Date dateCurrentDateTime) {
+    private boolean checkDateTime(@NonNull Show show, @NonNull Date dateCurrentDateTime) {
         boolean match = true;
         long lCurrentDateTime = dateCurrentDateTime.getTime();
         long lShowDateTime = show.getStartDateTime().getTime();
@@ -289,7 +289,7 @@ public class Filter {
             boolean bDateMatches = checkDate(show);
             boolean bTimeMatches = checkTime(show);
 //            Log.d("Filter.getShows", show.getShowID() + ";" + titleMatches + ";" + dateMatches + ";" + timeMatches);
-//
+
             if (bShowHasNotStarted && bTitleMatches && bDateMatches && bTimeMatches) {
                 alMatchingShows.add(show);
                 Log.d("Filter.getShows", "Added show " + show.getShowID() + " to matching shows.");
@@ -304,9 +304,9 @@ public class Filter {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // toString()
 
+    @Override
     @NonNull
     @SuppressLint({"DefaultLocale", "DiscouragedApi"})
-    @Override
     public String toString() {
         String s;
         s = "#### Filter.toString() ######################################\n" +
