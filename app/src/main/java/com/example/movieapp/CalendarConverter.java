@@ -1,83 +1,131 @@
 package com.example.movieapp;
 
 import android.annotation.SuppressLint;
+import androidx.annotation.NonNull;
+import android.util.Log;
 import java.util.Calendar;
 import java.util.Date;
 
 public class CalendarConverter {
-    private static CalendarConverter instance = null;
-
-    private CalendarConverter() {}
-
-    public static CalendarConverter getInstance() {
-        if (instance == null) {
-            instance = new CalendarConverter();
-        }
-        return instance;
-    }
+    private static final String sClassTag = "CalendarConverter";
 
     public static Date getEmptyDate() {
-        return new Date(0);
+        return Parser.parseDateTime("2000-01-01T00:00:00");
     }
 
-    public static Date extractDateInfo(Calendar calendar) {
-        Date date = getEmptyDate();
-        Date refDate = calendar.getTime();
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Convert to Date String (dd.MM.yyyy)
 
-        date.setYear(refDate.getYear());
-        date.setMonth(refDate.getMonth());
-        date.setDate(refDate.getDate());
-
-        return date;
-    }
-
-    public static Date extractTimeInfo(Calendar calendar) {
-        Date time = getEmptyDate();
-        Date refTime = calendar.getTime();
-
-        time.setHours(refTime.getHours());
-        time.setMinutes(refTime.getMinutes());
-        time.setSeconds(refTime.getSeconds());
-
-        return time;
-    }
-
-    public static long convertToLong(Calendar calendar) {
-        return calendar.getTime().getTime();
-    }
-
-    public static long extractDateAsLong(Calendar calendar) {
-        return extractDateInfo(calendar).getTime();
-    }
-
-    public static long extractTimeAsLong(Calendar calendar) {
-        return extractTimeInfo(calendar).getTime();
-    }
-
+    @NonNull
     @SuppressLint("DefaultLocale")
-    public static String convertToDateString(Date date) {
+    public static String convertToDateString(@NonNull Calendar calendar) {
+        final String sMethodTag = "convertToDateString(Calendar)";
+
+        int iDay = calendar.get(Calendar.DAY_OF_MONTH);
+        int iMonth = calendar.get(Calendar.MONTH) + 1;
+        int iYear = calendar.get(Calendar.YEAR);
+        String sDate = String.format(Parser.DATE_FORMAT_HUM_EMPTY, iDay, iMonth, iYear);
+
+        Log.d((sClassTag + "." + sMethodTag), ("Returning sDate with the value '" + sDate + "'."));
+        return sDate;
+    }
+
+    @NonNull
+    @SuppressLint("DefaultLocale")
+    public static String convertToDateString(@NonNull Date date) {
+        final String sMethodTag = "convertToDateString(Date)";
+
         int iDay = date.getDate();
         int iMonth = date.getMonth() + 1;
         int iYear = date.getYear() + 1900;
-        return String.format("%02d.%02d.%04d", iDay, iMonth, iYear);
+        String sDate = String.format(Parser.DATE_FORMAT_HUM_EMPTY, iDay, iMonth, iYear);
+
+        Log.d(sClassTag + "." + sMethodTag, "Returning sDate with the value '" + sDate + "'.");
+        return sDate;
     }
 
-    public static String convertToDateString(Calendar calendar) {
-        Date date = extractDateInfo(calendar);
-        return convertToDateString(date);
-    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Convert to Time String (HH:mm)
 
+    @NonNull
     @SuppressLint("DefaultLocale")
-    public static String convertToTimeString(Date date) {
+    public static String convertToTimeString(@NonNull Calendar calendar) {
+        final String sMethodTag = "convertToDateString(Calendar)";
+
+        int iHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int iMinute = calendar.get(Calendar.MINUTE) + 1;
+        String sTime = String.format(Parser.TIME_FORMAT_S_EMPTY, iHour, iMinute);
+
+        Log.d(sClassTag + "." + sMethodTag, "Returning sTime with the value '" + sTime + "'.");
+        return sTime;
+    }
+
+    @NonNull
+    @SuppressLint("DefaultLocale")
+    public static String convertToTimeString(@NonNull Date date) {
+        final String sMethodTag = "convertToDateString(Date)";
+
         int iHour = date.getHours();
         int iMinute = date.getMinutes();
-        return String.format("%02d:%02d", iHour, iMinute);
+        String sTime = String.format(Parser.TIME_FORMAT_S_EMPTY, iHour, iMinute);
+
+        Log.d(sClassTag + "." + sMethodTag, "Returning sTime with the value '" + sTime + "'.");
+        return sTime;
     }
 
-    public static String convertToTimeString(Calendar calendar) {
-        Date time = extractTimeInfo(calendar);
-        //Log.v("test", calendar.toString());
-        //Log.v("test", time.toString());
-        return convertToTimeString(time);
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Extract Date Information
+
+    public static Date extractDateAsDate(@NonNull Calendar calendar) {
+        String sDate = convertToDateString(calendar);
+        return Parser.parseDate(sDate);
     }
+
+    public static Date extractDateAsDate(@NonNull Date date) {
+        String sDate = convertToDateString(date);
+        return Parser.parseDate(sDate);
+    }
+
+    public static long extractDateAsLong(@NonNull Calendar calendar) {
+        final String sMethodTag = "extractDateAsLong(Calendar)";
+        long lDate = extractDateAsDate(calendar).getTime();
+        Log.d(sClassTag + "." + sMethodTag, "Returning lDate with the value " + lDate + ".");
+        return lDate;
+    }
+
+    public static long extractDateAsLong(@NonNull Date date) {
+        final String sMethodTag = "extractDateAsLong(Date)";
+        long lDate = extractDateAsDate(date).getTime();
+        Log.d(sClassTag + "." + sMethodTag, "Returning lDate with the value " + lDate + ".");
+        return lDate;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    // Extract Time Information
+
+    public static Date extractTimeAsDate(@NonNull Calendar calendar) {
+        String sTime = convertToTimeString(calendar);
+        return Parser.parseTime(sTime);
+    }
+
+    public static Date extractTimeAsDate(@NonNull Date date) {
+        String sTime = convertToTimeString(date);
+        return Parser.parseTime(sTime);
+    }
+
+    public static long extractTimeAsLong(@NonNull Calendar calendar) {
+        final String sMethodTag = "extractTimeAsLong(Calendar)";
+        long lTime = extractTimeAsDate(calendar).getTime();
+        Log.d(sClassTag + "." + sMethodTag, "Returning lTime with the value " + lTime + ".");
+        return lTime;
+    }
+
+    public static long extractTimeAsLong(@NonNull Date date) {
+        final String sMethodTag = "extractTimeAsLong(Date)";
+        long lTime = extractTimeAsDate(date).getTime();
+        Log.d(sClassTag + "." + sMethodTag, "Returning lTime with the value " + lTime + ".");
+        return lTime;
+    }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////
 }
