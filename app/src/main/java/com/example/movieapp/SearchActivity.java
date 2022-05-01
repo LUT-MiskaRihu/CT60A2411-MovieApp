@@ -143,7 +143,7 @@ public class SearchActivity extends AppCompatActivity {
             @SuppressLint("DefaultLocale")
             @Override
             public void onDateSet(DatePicker datePicker, int iYear, int iMonth, int iDay) {
-                etDate.setText(String.format("%02d.%02d.%04d", iDay, iMonth, iYear));
+                etDate.setText(String.format("%02d.%02d.%04d", iDay, iMonth + 1, iYear));
             }
         };
 
