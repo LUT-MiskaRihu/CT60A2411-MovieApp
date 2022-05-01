@@ -1,13 +1,9 @@
 package com.example.movieapp;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
-
-import androidx.annotation.Discouraged;
 import androidx.annotation.NonNull;
-
+import android.util.Log;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 
 public class Filter {
@@ -63,21 +59,18 @@ public class Filter {
 
     public void setTheatre(String sTheatreName) {
         final String sMethodTag = "setTheatre";
-
         instance.iTheatreID = Database.getTheatre(sTheatreName).getID();
         Log.i(sClassTag + "." + sMethodTag, "Set iTheatreID to " + instance.iTheatreID + ".");
     }
 
     public void clearTheatreID() {
         final String sMethodTag = "clearTheatreID";
-
         instance.iTheatreID = NOT_SET;
         Log.i(sClassTag + "." + sMethodTag, "Set iTheatreID to " + instance.iTheatreID + ".");
     }
 
     public int getTheatreID() {
         final String sMethodTag = "getTheatreID";
-
         Log.d(sClassTag + "." + sMethodTag, "Returning iTheatreID with the value " + instance.iTheatreID + ".");
         return instance.iTheatreID;
     }
@@ -85,7 +78,6 @@ public class Filter {
     // Title
     public void setTitle(String sTitle) {
         final String sMethodTag = "setTitle";
-
         instance.sTitle = sTitle;
         Log.i(sClassTag + "." + sMethodTag, "Set sTitle to " + instance.sTitle + ".");
     }
@@ -96,7 +88,6 @@ public class Filter {
 
     public void clearTitle() {
         final String sMethodTag = "clearTitle";
-
         instance.sTitle = null;
         Log.i(sClassTag + "." + sMethodTag, "Set sTitle to " + instance.sTitle + ".");
     }
@@ -104,34 +95,28 @@ public class Filter {
     // Date
     public void setMinStartDate(long lMinStartDate) {
         final String sMethodTag = "setMinStartDate(long)";
-
         instance.lMinStartDate = lMinStartDate;
         Log.i(sClassTag + "." + sMethodTag, "Set lMinStartDate to " + instance.lMinStartDate + ".");
     }
 
     public void setMinStartDate(@NonNull Date dateMinStartDate) {
         final String sMethodTag = "setMinStartDate(Date)";
-
         instance.lMinStartDate = dateMinStartDate.getTime();
         Log.i(sClassTag + "." + sMethodTag, "Set lMinStartDate to " + instance.lMinStartDate + ".");
     }
 
     public void setMinStartDate(String sMinStartDate) {
-        final String sMethodTag = "setMinStartDate(String)";
-
         setMinStartDate(Parser.parseDate(sMinStartDate));
     }
 
     public void clearMinStartDate() {
         final String sMethodTag = "clearMinStartDate";
-
         instance.lMinStartDate = NOT_SET;
         Log.i(sClassTag + "." + sMethodTag, "Set lMinStartDate to " + instance.lMinStartDate + ".");
     }
 
     public long getMinStartDate() {
         final String sMethodTag = "getMinStartDate";
-
         Log.d(sClassTag + "." + sMethodTag, "Returning lMinStartDate with the value " + instance.lMinStartDate + ".");
         return instance.lMinStartDate;
     }
@@ -139,21 +124,17 @@ public class Filter {
     // Min Time
     public void setMinStartTime(long lMinStartTime) {
         final String sMethodTag = "setMinStartTime(long)";
-
         instance.lMinStartTime = lMinStartTime;
         Log.i(sClassTag + "." + sMethodTag, "Set lMinStartTime to " + instance.lMinStartTime + ".");
     }
 
     public void setMinStartTime(@NonNull Date dateMinStartTime) {
         final String sMethodTag = "setMinStartTime(Date)";
-
         instance.lMinStartTime = dateMinStartTime.getTime();
         Log.i(sClassTag + "." + sMethodTag, "Set lMinStartTime to " + instance.lMinStartTime + ".");
     }
 
     public void setMinStartTime(String sMinStartTime) {
-        final String sMethodTag = "setMinStartTime(String)";
-
         setMinStartTime(Parser.parseTime(sMinStartTime));
     }
 
@@ -174,34 +155,28 @@ public class Filter {
     // Max Time
     public void setMaxStartTime(long lMaxStartTime) {
         final String sMethodTag = "setMaxStartTime(long)";
-
         instance.lMaxStartTime = lMaxStartTime;
         Log.i(sClassTag + "." + sMethodTag, "Set lMaxStartTime to " + instance.lMaxStartTime + ".");
     }
 
     public void setMaxStartTime(@NonNull Date dateMaxStartTime) {
         final String sMethodTag = "setMaxStartTime(Date)";
-
         instance.lMaxStartTime = dateMaxStartTime.getTime();
         Log.i(sClassTag + "." + sMethodTag, "Set lMaxStartTime to " + instance.lMaxStartTime + ".");
     }
 
     public void setMaxStartTime(String sMaxStartTime) {
-        final String sMethodTag = "setMaxStartTime(String)";
-
         setMaxStartTime(Parser.parseTime(sMaxStartTime));
     }
 
     public void clearMaxStartTime() {
         final String sMethodTag = "clearMaxStartTime";
-
         instance.lMaxStartTime = NOT_SET;
         Log.i(sClassTag + "." + sMethodTag, "Set lMaxStartTime to " + instance.lMaxStartTime + ".");
     }
 
     public long getMaxStartTime() {
         final String sMethodTag = "getMaxStartTime";
-
         Log.d(sClassTag + "." + sMethodTag, "Returning lMaxStartTime with the value " + instance.lMaxStartTime + ".");
         return instance.lMaxStartTime;
     }
@@ -223,32 +198,27 @@ public class Filter {
     }
 
     private boolean checkDate(@NonNull Show show) {
+        final String sMethodTag = "checkDate";
+        int iShowID = show.getShowID();
+
+        Log.i(sClassTag + "." + sMethodTag, "Checking date of show " + iShowID + ".");
+
         boolean match = true;
-        long lCurrentDate = CalendarConverter.extractDateAsLong(Calendar.getInstance());
-        System.out.println("lCurrentDate:\t" + lCurrentDate);
-        long lShowDate = CalendarConverter.extractDateAsLong(show.getStartDateTimeAsCalendar());
-        System.out.println("lShowDate:\t" + lShowDate);
+        long lCurrentDate = CalendarConverter.extractDateAsLong(new Date());
+        long lShowDate = CalendarConverter.extractDateAsLong(show.getStartDateTime());
         long lFilterDate = instance.lMinStartDate;
-        System.out.println("lFilterDate:\t" + lFilterDate);
-        System.out.println("---------------------------------------------------------------------");
 
         if (lShowDate < lCurrentDate) {
+            Log.i(sClassTag + "." + sMethodTag, "Discarded show " + iShowID + ", date has already passed.");
             match = false;
         } else {
             if (lFilterDate != NOT_SET) {
                 if (lShowDate != lFilterDate) {
+                    Log.i(sClassTag + "." + sMethodTag, "Discarded show " + iShowID + ", date doesn't match selected date.");
                     match = false;
                 }
             }
         }
-
-//        long lCurrentDate = CalendarConverter.extractDateAsLong(Calendar.getInstance());
-//        long lFilterDate = CalendarConverter.extractDateAsLong(calMinStartTime);
-//        long lShowDate = CalendarConverter.extractDateAsLong(show.getStartDateTimeAsCalendar());
-//
-//        if (lShowDate != lFilterDate) {
-//            match = false;
-//        }
 
         return match;
     }
