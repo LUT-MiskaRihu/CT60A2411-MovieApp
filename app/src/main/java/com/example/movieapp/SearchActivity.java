@@ -17,8 +17,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.util.Calendar;
+import java.util.Date;
 
 public class SearchActivity extends AppCompatActivity {
     private final String sClassTag = "SearchActivity";
@@ -201,15 +203,17 @@ public class SearchActivity extends AppCompatActivity {
         setFilterTheatre();
         setFilterTitle();
         setFilterDate();
-        setFilterMinTime();
+        boolean bTimeMinOK = setFilterMinTime();
         setFilterMaxTime();
-        loadDebugActivity(view);
-//        pickTheatre();
-//        if (filter.getHourFrom(Filter.START_DT_MIN) >= filter.getHourFrom(Filter.START_DT_MAX)) {
-//            Toast.makeText(this, "Alkamisajan minimi ei voi olla suurempi kuin sen maksini!", Toast.LENGTH_LONG).show();
-//        } else {
-//            loadDebugActivity(view);
-//        }
+        boolean bNoErrors = bTimeMinOK;
+
+        if (!bTimeMinOK) {
+            Toast.makeText(SearchActivity.this, "Tarkista kenttä \"alkaa aikaisintaan\". (Esim. onko aika jo mennyt.)", Toast.LENGTH_LONG).show();
+        }
+
+        if (bNoErrors) {
+            loadDebugActivity(view);
+        }
     }
 
     public void showFilter() {
@@ -257,17 +261,37 @@ public class SearchActivity extends AppCompatActivity {
         }
     }
 
-    private void setFilterMinTime() {
+    private boolean setFilterMinTime() {
         final String sMethodTag = "setFilterMinTime";
-        String sMinTime = etTimeMin.getText().toString();
 
-        if (sMinTime.equals("")) {
-            Log.w(sClassTag + "." + sMethodTag, "Input string sMinTime is empty.");
+        String sTimeMin = etTimeMin.getText().toString();
+        boolean success = true;
+
+        if (sTimeMin.equals("")) {
+            Log.w(sClassTag + "." + sMethodTag, "Input string sTimeMin is empty.");
             filter.clearMinStartTime();
         } else {
-            Log.i(sClassTag + "." + sMethodTag, "Setting filter's minimum time to '" + sMinTime + "'.");
-            filter.setMinStartTime(etTimeMin.getText().toString());
+            String sDate = etDate.getText().toString();
+            String sCurrentDate = CalendarConverter.convertToDateString(new Date());
+            long lCurrentTime = CalendarConverter.extractTimeAsLong(new Date());
+            long lTimeMin = CalendarConverter.extractTimeAsLong(Parser.parseTime(sTimeMin));
+
+            if (!sDate.equals("")) {
+                if (sDate.equals(sCurrentDate)) {
+                    if (lTimeMin < lCurrentTime) {
+                        success = false;
+                    }
+                } else {
+                    Log.i(sClassTag + "." + sMethodTag, "Setting filter's minimum time to '" + sTimeMin + "'.");
+                    filter.setMinStartTime(lTimeMin);
+                }
+            } else {
+                Log.i(sClassTag + "." + sMethodTag, "Setting filter's minimum time to '" + sTimeMin + "'.");
+                filter.setMinStartTime(lTimeMin);
+            }
         }
+
+        return success;
     }
 
     private void setFilterMaxTime() {
