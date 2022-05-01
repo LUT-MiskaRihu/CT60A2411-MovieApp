@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import androidx.annotation.NonNull;
 import android.util.Log;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 public class Filter {
@@ -25,9 +26,9 @@ public class Filter {
     private int iTheatreID;      // stores the location id of a theater
     private String sTitle;
 
-    private long lMinStartDate;
-    private long lMinStartTime;
-    private long lMaxStartTime;
+    private long lStartDateMin;
+    private long lStartTimeMin;
+    private long lStartTimeMax;
 
     private static Filter instance = null;
 
@@ -37,9 +38,9 @@ public class Filter {
     private Filter() {
         iTheatreID = NOT_SET;
         sTitle = null;
-        lMinStartDate = NOT_SET;
-        lMinStartTime = NOT_SET;
-        lMaxStartTime = NOT_SET;
+        lStartDateMin = NOT_SET;
+        lStartTimeMin = NOT_SET;
+        lStartTimeMax = NOT_SET;
     }
 
     public static Filter getInstance() {
@@ -95,14 +96,14 @@ public class Filter {
     // Date
     public void setMinStartDate(long lMinStartDate) {
         final String sMethodTag = "setMinStartDate(long)";
-        instance.lMinStartDate = lMinStartDate;
-        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartDate to " + instance.lMinStartDate + ".");
+        instance.lStartDateMin = lMinStartDate;
+        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartDate to " + instance.lStartDateMin + ".");
     }
 
     public void setMinStartDate(@NonNull Date dateMinStartDate) {
         final String sMethodTag = "setMinStartDate(Date)";
-        instance.lMinStartDate = dateMinStartDate.getTime();
-        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartDate to " + instance.lMinStartDate + ".");
+        instance.lStartDateMin = dateMinStartDate.getTime();
+        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartDate to " + instance.lStartDateMin + ".");
     }
 
     public void setMinStartDate(String sMinStartDate) {
@@ -111,27 +112,27 @@ public class Filter {
 
     public void clearMinStartDate() {
         final String sMethodTag = "clearMinStartDate";
-        instance.lMinStartDate = NOT_SET;
-        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartDate to " + instance.lMinStartDate + ".");
+        instance.lStartDateMin = NOT_SET;
+        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartDate to " + instance.lStartDateMin + ".");
     }
 
     public long getMinStartDate() {
         final String sMethodTag = "getMinStartDate";
-        Log.d(sClassTag + "." + sMethodTag, "Returning lMinStartDate with the value " + instance.lMinStartDate + ".");
-        return instance.lMinStartDate;
+        Log.d(sClassTag + "." + sMethodTag, "Returning lMinStartDate with the value " + instance.lStartDateMin + ".");
+        return instance.lStartDateMin;
     }
 
     // Min Time
     public void setMinStartTime(long lMinStartTime) {
         final String sMethodTag = "setMinStartTime(long)";
-        instance.lMinStartTime = lMinStartTime;
-        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartTime to " + instance.lMinStartTime + ".");
+        instance.lStartTimeMin = lMinStartTime;
+        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartTime to " + instance.lStartTimeMin + ".");
     }
 
     public void setMinStartTime(@NonNull Date dateMinStartTime) {
         final String sMethodTag = "setMinStartTime(Date)";
-        instance.lMinStartTime = dateMinStartTime.getTime();
-        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartTime to " + instance.lMinStartTime + ".");
+        instance.lStartTimeMin = dateMinStartTime.getTime();
+        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartTime to " + instance.lStartTimeMin + ".");
     }
 
     public void setMinStartTime(String sMinStartTime) {
@@ -141,28 +142,28 @@ public class Filter {
     public void clearMinStartTime() {
         final String sMethodTag = "clearMinStartTime";
 
-        instance.lMaxStartTime = NOT_SET;
-        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartTime to " + instance.lMinStartTime + ".");
+        instance.lStartTimeMax = NOT_SET;
+        Log.i(sClassTag + "." + sMethodTag, "Set lMinStartTime to " + instance.lStartTimeMin + ".");
     }
 
     public long getMinStartTime() {
         final String sMethodTag = "clearMinStartTime";
 
-        Log.d(sClassTag + "." + sMethodTag, "Returning lMinStartTime with the value " + instance.lMinStartTime + ".");
-        return instance.lMinStartTime;
+        Log.d(sClassTag + "." + sMethodTag, "Returning lMinStartTime with the value " + instance.lStartTimeMin + ".");
+        return instance.lStartTimeMin;
     }
 
     // Max Time
     public void setMaxStartTime(long lMaxStartTime) {
         final String sMethodTag = "setMaxStartTime(long)";
-        instance.lMaxStartTime = lMaxStartTime;
-        Log.i(sClassTag + "." + sMethodTag, "Set lMaxStartTime to " + instance.lMaxStartTime + ".");
+        instance.lStartTimeMax = lMaxStartTime;
+        Log.i(sClassTag + "." + sMethodTag, "Set lMaxStartTime to " + instance.lStartTimeMax + ".");
     }
 
     public void setMaxStartTime(@NonNull Date dateMaxStartTime) {
         final String sMethodTag = "setMaxStartTime(Date)";
-        instance.lMaxStartTime = dateMaxStartTime.getTime();
-        Log.i(sClassTag + "." + sMethodTag, "Set lMaxStartTime to " + instance.lMaxStartTime + ".");
+        instance.lStartTimeMax = dateMaxStartTime.getTime();
+        Log.i(sClassTag + "." + sMethodTag, "Set lMaxStartTime to " + instance.lStartTimeMax + ".");
     }
 
     public void setMaxStartTime(String sMaxStartTime) {
@@ -171,14 +172,14 @@ public class Filter {
 
     public void clearMaxStartTime() {
         final String sMethodTag = "clearMaxStartTime";
-        instance.lMaxStartTime = NOT_SET;
-        Log.i(sClassTag + "." + sMethodTag, "Set lMaxStartTime to " + instance.lMaxStartTime + ".");
+        instance.lStartTimeMax = NOT_SET;
+        Log.i(sClassTag + "." + sMethodTag, "Set lMaxStartTime to " + instance.lStartTimeMax + ".");
     }
 
     public long getMaxStartTime() {
         final String sMethodTag = "getMaxStartTime";
-        Log.d(sClassTag + "." + sMethodTag, "Returning lMaxStartTime with the value " + instance.lMaxStartTime + ".");
-        return instance.lMaxStartTime;
+        Log.d(sClassTag + "." + sMethodTag, "Returning lMaxStartTime with the value " + instance.lStartTimeMax + ".");
+        return instance.lStartTimeMax;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -197,6 +198,18 @@ public class Filter {
         return match;
     }
 
+    private boolean checkDateTime(@NonNull Show show, Date dateCurrentDateTime) {
+        boolean match = true;
+        long lCurrentDateTime = dateCurrentDateTime.getTime();
+        long lShowDateTime = show.getStartDateTime().getTime();
+
+        if (lShowDateTime < lCurrentDateTime) {
+            match = false;
+        }
+
+        return match;
+    }
+
     private boolean checkDate(@NonNull Show show) {
         final String sMethodTag = "checkDate";
         int iShowID = show.getShowID();
@@ -204,35 +217,40 @@ public class Filter {
         Log.i(sClassTag + "." + sMethodTag, "Checking date of show " + iShowID + ".");
 
         boolean match = true;
-        long lCurrentDate = CalendarConverter.extractDateAsLong(new Date());
         long lShowDate = CalendarConverter.extractDateAsLong(show.getStartDateTime());
-        long lFilterDate = instance.lMinStartDate;
+        long lFilterDate = instance.lStartDateMin;
 
-        if (lShowDate < lCurrentDate) {
-            Log.i(sClassTag + "." + sMethodTag, "Discarded show " + iShowID + ", date has already passed.");
-            match = false;
-        } else {
-            if (lFilterDate != NOT_SET) {
-                if (lShowDate != lFilterDate) {
-                    Log.i(sClassTag + "." + sMethodTag, "Discarded show " + iShowID + ", date doesn't match selected date.");
-                    match = false;
-                }
+        if (lFilterDate != NOT_SET) {
+            if (lShowDate != lFilterDate) {
+                Log.i(sClassTag + "." + sMethodTag, "Discarded show " + iShowID + ", date doesn't match selected date.");
+                match = false;
             }
         }
 
         return match;
     }
 
-    private boolean checkTime(Show show) {
-        boolean match = true;
+    private boolean checkTime(@NonNull Show show) {
+        final String sMethodTag = "checkTitle";
 
-//        long lFilterTimeMin = CalendarConverter.extractTimeAsLong(calMinStartTime);
-//        long lFilterTimeMax = CalendarConverter.extractTimeAsLong(calMaxStartTime);
-//        long lShowStartTime = CalendarConverter.extractTimeAsLong(show.getStartDateTimeAsCalendar());
-//
-//        if ((lShowStartTime < lFilterTimeMin) || (lShowStartTime > lFilterTimeMax)) {
-//            match = false;
-//        }
+        boolean match = true;
+        long lFilterTimeMin = instance.lStartTimeMin;
+        long lFilterTimeMax = instance.lStartTimeMax;
+        long lShowTime = CalendarConverter.extractTimeAsLong(show.getStartDateTime());
+
+        // Remove shows that begin too early.
+        if (lFilterTimeMin != NOT_SET) {
+            if (lShowTime < lFilterTimeMin) {
+                match = false;
+            }
+        }
+
+        // Remove shows that begin too late.
+        if (lFilterTimeMax != NOT_SET) {
+            if (lShowTime > lFilterTimeMax) {
+                match = false;
+            }
+        }
 
         return match;
     }
@@ -248,6 +266,7 @@ public class Filter {
         Log.i("Filter.getShows", "Started filtration process.");
         ArrayList<Show> alAllShows;
         ArrayList<Show> alMatchingShows = new ArrayList<>();
+        Date dateCurrentDateTime = new Date();
 
         /* Check if location ID is specified.
          * if true, search from the given location's list
@@ -265,12 +284,13 @@ public class Filter {
 
         // Check other search criteria
         for (Show show : alAllShows) {
-            boolean titleMatches = checkTitle(show);
-            boolean dateMatches = checkDate(show);
-//            boolean timeMatches = checkTime(show);
+            boolean bShowHasNotStarted = checkDateTime(show, dateCurrentDateTime); // remove shows that have already started or ended.
+            boolean bTitleMatches = checkTitle(show);
+            boolean bDateMatches = checkDate(show);
+            boolean bTimeMatches = checkTime(show);
 //            Log.d("Filter.getShows", show.getShowID() + ";" + titleMatches + ";" + dateMatches + ";" + timeMatches);
 //
-            if (titleMatches && dateMatches /*&& timeMatches*/) {
+            if (bShowHasNotStarted && bTitleMatches && bDateMatches && bTimeMatches) {
                 alMatchingShows.add(show);
                 Log.d("Filter.getShows", "Added show " + show.getShowID() + " to matching shows.");
             }
@@ -302,12 +322,12 @@ public class Filter {
                 instance.iTheatreID,
                 Database.getTheatre(instance.iTheatreID).getName(),
                 instance.sTitle,
-                new Date(instance.lMinStartDate),
-                new Date(instance.lMinStartDate).getTime(),
-                new Date(instance.lMinStartTime),
-                new Date(instance.lMinStartTime).getTime(),
-                new Date(instance.lMaxStartTime),
-                new Date(instance.lMaxStartTime).getTime()
+                new Date(instance.lStartDateMin),
+                new Date(instance.lStartDateMin).getTime(),
+                new Date(instance.lStartTimeMin),
+                new Date(instance.lStartTimeMin).getTime(),
+                new Date(instance.lStartTimeMax),
+                new Date(instance.lStartTimeMax).getTime()
         );
     }
 }
