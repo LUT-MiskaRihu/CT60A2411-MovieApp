@@ -8,8 +8,8 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -17,11 +17,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import java.util.Calendar;
 
 public class SearchActivity extends AppCompatActivity {
+    private final String sClassTag = "SearchActivity";
     private Spinner spnTheatres;
     private EditText etTitle;
     private EditText etDate;
@@ -224,37 +224,61 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void setFilterTheatre() {
-        filter.setTheatre(spnTheatres.getSelectedItem().toString());
+        final String sMethodTag = "setFilterTheatre";
+        String sTheatre = spnTheatres.getSelectedItem().toString();
+
+        Log.i(sClassTag + "." + sMethodTag, "Setting filter's theatre to '" + sTheatre + "'.");
+        filter.setTheatre(sTheatre);
     }
 
     private void setFilterTitle() {
-        if (etTitle.getText().toString().equals("")) {
+        final String sMethodTag = "setFilterTitle";
+        String sTitle = etTitle.getText().toString();
+
+        if (sTitle.equals("")) {
+            Log.w(sClassTag + "." + sMethodTag, "Input string sTitle is empty.");
             filter.clearTitle();
         } else {
-            filter.setTitle(etTitle.getText().toString());
+            Log.i(sClassTag + "." + sMethodTag, "Setting filter's title to '" + sTitle + "'.");
+            filter.setTitle(sTitle);
         }
     }
 
     private void setFilterDate() {
-        if (etDate.getText().toString().equals("")) {
+        final String sMethodTag = "setFilterDate";
+        String sDate = etDate.getText().toString();
+
+        if (sDate.equals("")) {
+            Log.w(sClassTag + "." + sMethodTag, "Input string sDate is empty.");
             filter.clearMinStartDate();
         } else {
-            filter.setMinStartDate(etDate.getText().toString());
+            Log.i(sClassTag + "." + sMethodTag, "Setting filter's date to '" + sDate + "'.");
+            filter.setMinStartDate(sDate);
         }
     }
 
     private void setFilterMinTime() {
-        if (etTimeMin.getText().toString().equals("")) {
+        final String sMethodTag = "setFilterMinTime";
+        String sMinTime = etTimeMin.getText().toString();
+
+        if (sMinTime.equals("")) {
+            Log.w(sClassTag + "." + sMethodTag, "Input string sMinTime is empty.");
             filter.clearMinStartTime();
         } else {
+            Log.i(sClassTag + "." + sMethodTag, "Setting filter's minimum time to '" + sMinTime + "'.");
             filter.setMinStartTime(etTimeMin.getText().toString());
         }
     }
 
     private void setFilterMaxTime() {
-        if (etTimeMax.getText().toString().equals("")) {
+        final String sMethodTag = "setFilterMaxTime";
+        String sMaxTime = etTimeMax.getText().toString();
+
+        if (sMaxTime.equals("")) {
+            Log.w(sClassTag + "." + sMethodTag, "Input string sMaxTime is empty.");
             filter.clearMaxStartTime();
         } else {
+            Log.i(sClassTag + "." + sMethodTag, "Setting filter's minimum time to '" + sMaxTime + "'.");
             filter.setMaxStartTime(etTimeMax.getText().toString());
         }
     }
