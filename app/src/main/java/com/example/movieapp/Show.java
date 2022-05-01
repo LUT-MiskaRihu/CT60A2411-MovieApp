@@ -2,7 +2,6 @@ package com.example.movieapp;
 
 import static java.lang.System.exit;
 import androidx.annotation.NonNull;
-import java.util.Calendar;
 import java.util.Date;
 
 public class Show extends Movie {
@@ -18,8 +17,8 @@ public class Show extends Movie {
 
     private int iShowID;
     private int iEventID;
-    private Calendar calStartDateTime;
-    private Calendar calEndDateTime;
+    private Date dateStartDateTime;
+    private Date dateEndDateTime;
     private int iTheatreID;
     private String sAuditoriumName;
     private String sPresentationMethod;
@@ -30,8 +29,8 @@ public class Show extends Movie {
     public Show() {
         this.iShowID = 0;
         this.iEventID = 0;
-        this.calStartDateTime = Calendar.getInstance();
-        this.calEndDateTime = Calendar.getInstance();
+        this.dateStartDateTime = CalendarConverter.getEmptyDate();
+        this.dateEndDateTime = CalendarConverter.getEmptyDate();
         this.iTheatreID = 0;
         this.sAuditoriumName = null;
         this.sPresentationMethod = null;
@@ -63,46 +62,40 @@ public class Show extends Movie {
     }
 
     // Start Time
-    public void setStartDateTime(Calendar calStartDateTime) {
-        this.calStartDateTime = calStartDateTime;
-    }
     public void setStartDateTime(Date dateStartDateTime) {
-        this.calStartDateTime.setTime(dateStartDateTime);
+        this.dateStartDateTime = dateStartDateTime;
     }
+
     public void setStartDateTime(String sStartDateTime) {
-        this.calStartDateTime.setTime(Parser.parseDateTime(sStartDateTime));
+        this.dateStartDateTime = Parser.parseDateTime(sStartDateTime);
     }
-    public Calendar getStartDateTimeAsCalendar() {
-        return this.calStartDateTime;
-    }
-    public long getStartDateTimeAsLong() {
-        return CalendarConverter.convertToLong(this.calStartDateTime);
+
+    public Date getStartDateTime() {
+        return this.dateStartDateTime;
     }
 
     // End Time
-    public void setEndDateTime(Calendar calEndDateTime) {
-        this.calEndDateTime = calEndDateTime;
-    }
     public void setEndDateTime(Date dateEndDateTime) {
-        this.calEndDateTime.setTime(dateEndDateTime);
+        this.dateEndDateTime = dateEndDateTime;
     }
+
     public void setEndDateTime(String sEndDateTime) {
-        this.calEndDateTime.setTime(Parser.parseDateTime(sEndDateTime));
+        this.dateEndDateTime = Parser.parseDateTime(sEndDateTime);
     }
-    public Calendar getEndDateTimeAsCalendar() {
-        return this.calEndDateTime;
-    }
-    public long getEndDateTimeAsLong() {
-        return CalendarConverter.convertToLong(this.calEndDateTime);
+
+    public Date getEndDateTime() {
+        return this.dateEndDateTime;
     }
 
     // Theatre ID
     public void setTheatreID(int iTheatreID) {
         this.iTheatreID = iTheatreID;
     }
+
     public void setTheatreID(String sTheatreID) {
         this.iTheatreID = Integer.parseInt(sTheatreID);
     }
+
     public int getTheatreID() {
         return this.iTheatreID;
     }
@@ -111,6 +104,7 @@ public class Show extends Movie {
     public void setAuditoriumName(String sAuditoriumName) {
         this.sAuditoriumName = sAuditoriumName;
     }
+
     public String getAuditoriumName() {
         return this.sAuditoriumName;
     }
@@ -119,6 +113,7 @@ public class Show extends Movie {
     public void setPresentationMethod(String sPresentationMethod) {
         this.sPresentationMethod = sPresentationMethod;
     }
+
     public String getPresentationMethod() {
         return this.sPresentationMethod;
     }
@@ -130,10 +125,10 @@ public class Show extends Movie {
 
         switch (calendar) {
             case(START_DATE_TIME):
-                sDate = CalendarConverter.convertToDateString(calStartDateTime);
+                sDate = CalendarConverter.convertToDateString(dateStartDateTime);
                 break;
             case(END_DATE_TIME):
-                sDate = CalendarConverter.convertToDateString(calEndDateTime);
+                sDate = CalendarConverter.convertToDateString(dateEndDateTime);
                 break;
             default:
                 System.err.println(ErrorMessages.ERR_XML_READER_INVALID_CALENDAR_CODE);
@@ -150,11 +145,11 @@ public class Show extends Movie {
         switch (calendar) {
             case(START_DATE_TIME):
                 //Log.v("test", "start time of " + iShowID);
-                sTime = CalendarConverter.convertToTimeString(calStartDateTime);
+                sTime = CalendarConverter.convertToTimeString(dateStartDateTime);
                 break;
             case(END_DATE_TIME):
                 //Log.v("test", "end time of " + iShowID);
-                sTime = CalendarConverter.convertToTimeString(calEndDateTime);
+                sTime = CalendarConverter.convertToTimeString(dateEndDateTime);
                 break;
             default:
                 System.err.println(ErrorMessages.ERR_XML_READER_INVALID_CALENDAR_CODE);
