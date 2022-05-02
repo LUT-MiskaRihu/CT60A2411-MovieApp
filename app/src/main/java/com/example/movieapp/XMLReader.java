@@ -81,10 +81,11 @@ public class XMLReader {
         ArrayList<Theatre> theatres = new ArrayList<>();
 
         for (Element element : elements) {
-            int id = Integer.parseInt(element.getElementsByTagName("ID").item(0).getTextContent());
-            String name = element.getElementsByTagName("Name").item(0).getTextContent();
-            Theatre theatre = new Theatre(id, name);
-            theatres.add(theatre);
+            String sTheatreName = element.getElementsByTagName("Name").item(0).getTextContent();
+            int iTheatreID = Integer.parseInt(element.getElementsByTagName("ID").item(0).getTextContent());
+            if ((sTheatreName.contains(":")) || (iTheatreID == 1029)) {
+                theatres.add(new Theatre(iTheatreID, sTheatreName));
+            }
         }
 
         Log.v("XMLReader.getOnlineTheatres", "Found " + theatres.size() + " theatres.");
