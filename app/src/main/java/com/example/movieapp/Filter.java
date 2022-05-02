@@ -12,7 +12,7 @@ public class Filter {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     // Location Codes
 
-    private static final int ANY_LOCATION = 1029; // 1029 refers to theater name "Valitse alue/teatteri" aka all possible locations.
+    public static final int ANY_LOCATION = 1029; // 1029 refers to theater name "Valitse alue/teatteri" aka all possible locations.
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
