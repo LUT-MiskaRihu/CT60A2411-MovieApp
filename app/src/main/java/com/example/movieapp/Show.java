@@ -166,7 +166,7 @@ public class Show extends Movie {
         String movie;
 
         movie = "\n" +
-                "\n" + getShowID() + "\n" +
+                getShowID() + "\n" + // debug item
                 getTitle().toUpperCase() + " (" + getRating() + ")\n" +
                 "\n" +
                 getGenres() + "\n" +
