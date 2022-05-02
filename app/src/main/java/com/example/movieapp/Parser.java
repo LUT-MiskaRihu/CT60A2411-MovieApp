@@ -1,6 +1,7 @@
 package com.example.movieapp;
 
 import android.annotation.SuppressLint;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;

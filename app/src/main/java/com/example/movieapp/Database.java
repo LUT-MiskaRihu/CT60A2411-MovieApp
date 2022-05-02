@@ -1,7 +1,9 @@
 package com.example.movieapp;
 
 import android.util.Log;
+
 import androidx.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,9 +17,9 @@ public class Database {
         Log.i("Database.Database", "Started creating a new database.");
         loadTheatreInformation();
         loadShowInformation();
-        Log.i("Database.Database","Finished creating a new database.");
+        Log.i("Database.Database", "Finished creating a new database.");
     }
-    
+
     public static Database getInstance() {
         if (instance == null) {
             instance = new Database();
@@ -28,13 +30,13 @@ public class Database {
     private static void loadTheatreInformation() {
         // Get theatres and IDs
         if (alTheatres == null) {
-            Log.i("Database.getTheatreInformation","Started fetching theatres/areas.");
+            Log.i("Database.getTheatreInformation", "Started fetching theatres/areas.");
             alTheatres = XMLReader.getOnlineTheatres();
         }
         for (Theatre t : alTheatres) {
             System.out.println("\t\t" + t.toString());
         }
-        Log.i("Database.getTheatreInformation","Finished fetching theatres/areas. Found " + alTheatres.size() + " theatres/areas.");
+        Log.i("Database.getTheatreInformation", "Finished fetching theatres/areas. Found " + alTheatres.size() + " theatres/areas.");
     }
 
     private static void loadShowInformation() {
@@ -43,16 +45,16 @@ public class Database {
 
         for (Theatre theatre : alTheatres.subList(1, alTheatres.size() - 1)) {
             int iTheatreID = theatre.getID();
-            Log.i("Database.getShowInformation","Started fetching shows for theatre " + iTheatreID + ".");
+            Log.i("Database.getShowInformation", "Started fetching shows for theatre " + iTheatreID + ".");
 
             if (theatre.getShows().size() == 0) {
-                Log.i("Database.getShowInformation","Downloading data...");
+                Log.i("Database.getShowInformation", "Downloading data...");
                 theatre.addShows(XMLReader.getOnlineShowsAt(iTheatreID));
                 ArrayList<Show> alShows = theatre.getShows();
 
                 if (alShows.size() != 0) {
                     alAllShows.addAll(alShows); // add each theatre's shows to the list containing all shows.
-                    Log.i("Database.getShowInformation","Finished fetching shows for theatre " + iTheatreID + ". Found " + theatre.getShows().size() + " shows.");
+                    Log.i("Database.getShowInformation", "Finished fetching shows for theatre " + iTheatreID + ". Found " + theatre.getShows().size() + " shows.");
                 }
             }
         }
@@ -71,9 +73,9 @@ public class Database {
 
     public static ArrayList<Theatre> getTheatres() {
         for (Theatre t : alTheatres) {
-            Log.d("Database.getTheatres",t.toString());
+            Log.d("Database.getTheatres", t.toString());
         }
-        Log.i("Database.getTheatres","Returned ArrayList, " + alTheatres.size() + " theatre(s).");
+        Log.i("Database.getTheatres", "Returned ArrayList, " + alTheatres.size() + " theatre(s).");
         return alTheatres;
     }
 
@@ -87,7 +89,7 @@ public class Database {
             alShows = getTheatre(iTheatreID).getShows();
         }
 
-        Log.i("Database.getShowsAtTheatres","Returned ArrayList, " + alShows.size() + " show(s).");
+        Log.i("Database.getShowsAtTheatres", "Returned ArrayList, " + alShows.size() + " show(s).");
         return alShows;
     }
 

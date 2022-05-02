@@ -1,8 +1,10 @@
 package com.example.movieapp;
 
 import android.annotation.SuppressLint;
-import androidx.annotation.NonNull;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+
 import java.util.Calendar;
 import java.util.Date;
 
