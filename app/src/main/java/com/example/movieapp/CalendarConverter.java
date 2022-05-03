@@ -12,8 +12,7 @@ public class CalendarConverter {
     private static final String sClassTag = "CalendarConverter";
 
     /**
-     * This method returns an "empty" reference date.
-     * @return "empty" reference date (Date object).
+     * This method returns an "empty" date time for default values and reference purposes.
      */
     public static Date getEmptyDate() {
         return Parser.parseDateTime("2000-01-01T00:00:00");
