@@ -41,7 +41,7 @@ public class ResultsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int index, long id) {
                 Movie movie = alShows.get(index);
-                openDialog(movie.getTitle());
+                openDialog(movie);
             }
         });
 
@@ -54,8 +54,11 @@ public class ResultsActivity extends AppCompatActivity {
         });
     }
 
-    public void openDialog(String sMovieTitle) {
+    public void openDialog(Movie movie) {
         ShowInfoDialog showInfoDialog = new ShowInfoDialog();
-        showInfoDialog.show(getSupportFragmentManager(), "Arvostele elokuva\n" + sMovieTitle);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("movie", movie);
+        showInfoDialog.setArguments(bundle);
+        showInfoDialog.show(getSupportFragmentManager(), "Arvostele elokuva");
     }
 }

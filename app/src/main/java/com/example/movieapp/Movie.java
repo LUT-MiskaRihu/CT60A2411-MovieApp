@@ -1,8 +1,9 @@
 package com.example.movieapp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Movie {
+public class Movie implements Serializable {
     private String sTitle;
     private String sOriginalTitle;
     private int iLength; // in minutes

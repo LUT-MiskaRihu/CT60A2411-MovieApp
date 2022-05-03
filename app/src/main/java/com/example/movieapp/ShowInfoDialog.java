@@ -19,13 +19,22 @@ public class ShowInfoDialog extends AppCompatDialogFragment {
     private Button btnShowInfo;
     private Button btnSaveReview;
     private View view;
+    private Movie movie;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        if (getArguments() != null) {
+            movie = (Movie) getArguments().getSerializable("movie");
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.dialog_show_info, null);
+        view = inflater.inflate(R.layout.dialog_show_info, null);
+        tvMovieTitle = view.findViewById(R.id.tvMovieTitle);
+        btnMovieInfo = view.findViewById(R.id.btnMovieInfo);
+        btnShowInfo = view.findViewById(R.id.btnShowInfo);
+        btnSaveReview = view.findViewById(R.id.btnSaveReview);
 
         builder.setView(view)
                 .setTitle("Arvostelusi ja elokuvan tiedot")
@@ -42,11 +51,9 @@ public class ShowInfoDialog extends AppCompatDialogFragment {
                     }
                 });
 
-        tvMovieTitle = view.findViewById(R.id.tvMovieTitle);
-        btnMovieInfo = view.findViewById(R.id.btnMovieInfo);
-        btnShowInfo = view.findViewById(R.id.btnShowInfo);
-        btnSaveReview = view.findViewById(R.id.btnSaveReview);
+        tvMovieTitle.setText(movie.getTitle());
 
         return builder.create();
     }
+
 }
