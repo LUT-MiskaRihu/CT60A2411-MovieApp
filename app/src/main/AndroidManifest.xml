@@ -30,7 +30,7 @@
             android:label="Hakutulokset"
             android:exported="false" />
         <activity
-            android:name=".DebugActivity"
+            android:name=".ResultsActivity"
             android:exported="false" />
         <activity
             android:name=".SearchActivity"

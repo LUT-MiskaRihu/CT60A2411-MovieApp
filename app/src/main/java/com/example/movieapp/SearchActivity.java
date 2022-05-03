@@ -178,7 +178,7 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     public void loadDebugActivity(View view) {
-        Intent intent = new Intent(SearchActivity.this, DebugActivity.class);
+        Intent intent = new Intent(SearchActivity.this, ResultsActivity.class);
         startActivity(intent);
     }
 

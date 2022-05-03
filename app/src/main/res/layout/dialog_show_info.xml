@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="10dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="1dp">
+
+        <TextView
+            android:id="@+id/tvMovieTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:text="movie title"
+            android:textSize="24sp" />
+
+        <RatingBar
+            android:id="@+id/rbStars"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:max="5" />
+
+        <EditText
+            android:id="@+id/etComment"
+            style="@style/Widget.AppCompat.EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="kirjoita arvostelun kommentti"
+            android:inputType="textMultiLine"
+            android:lines="5" />
+
+        <Button
+            android:id="@+id/btnSaveReview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Tallenna arvostelu" />
+
+        <View
+            android:id="@+id/divider2"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+
+        <Button
+            android:id="@+id/btnMovieInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lisätietoja elokuvasta" />
+
+        <Button
+            android:id="@+id/btnShowInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lisätietoja esityksestä" />
+
+    </LinearLayout>
+
+</RelativeLayout>
